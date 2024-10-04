@@ -31,9 +31,11 @@ builder.Services.AddDbContext<SoundifyDbContext>(options =>
     options.UseNpgsql(connectionString);
 });
 
+builder.Services.AddScoped<IAlbumRepository, AlbumRepository>();
 builder.Services.AddScoped<IArtistRepository, ArtistRepository>();
 builder.Services.AddScoped<IArtistSmRepository, ArtistSmRepository>();
 
+builder.Services.AddScoped<IAlbumManager, AlbumManager>();
 builder.Services.AddScoped<IArtistManager, ArtistManager>();
 builder.Services.AddScoped<IArtistSmManager, ArtistSmManager>();
 

@@ -13,6 +13,16 @@ public static class ModelHelper
             ImageFilePath = artist.ImageFilePath
         };
 
+    public static AlbumResponse ToAlbumResponse(this Album album) =>
+        new()
+        {
+            Id = album.Id,
+            ArtistId = album.ArtistId,
+            Title = album.Title,
+            ReleaseDate = album.ReleaseDate,
+            CoverFilePath = album.CoverFilePath
+        };
+
     public static ArtistSmResponse ToArtistSmResponse(this ArtistSocialMedia artistSm) =>
         new()
         {
