@@ -56,6 +56,13 @@ public static class ModelHelper
             Url = artistSm.Url
         };
 
+    public static UserFavoriteResponse ToUserFavoriteResponse(this UserFavorite favorite) =>
+        new()
+        {
+            UserId = favorite.UserId,
+            TrackId = favorite.TrackId
+        };
+
     public static TrackRatingResponse ToTrackRatingResponse(this TrackRating trackRating) =>
         new()
         {

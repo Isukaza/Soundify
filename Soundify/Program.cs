@@ -38,6 +38,7 @@ builder.Services.AddScoped<IArtistSmRepository, ArtistSmRepository>();
 builder.Services.AddScoped<ISingleRepository, SingleRepository>();
 builder.Services.AddScoped<ITrackRepository, TrackRepository>();
 builder.Services.AddScoped<ITrackRatingRepository, TrackRatingRepository>();
+builder.Services.AddScoped<IUserFavoriteRepository, UserFavoriteRepository>();
 
 builder.Services.AddScoped<IAlbumManager, AlbumManager>();
 builder.Services.AddScoped<IGenreManager, GenreManager>();
@@ -46,6 +47,7 @@ builder.Services.AddScoped<IArtistSmManager, ArtistSmManager>();
 builder.Services.AddScoped<ISingleManager, SingleManager>();
 builder.Services.AddScoped<ITrackManager, TrackManager>();
 builder.Services.AddScoped<ITrackRatingManager, TrackRatingManager>();
+builder.Services.AddScoped<IUserFavoriteManager, UserFavoriteManager>();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
