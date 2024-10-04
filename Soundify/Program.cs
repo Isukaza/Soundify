@@ -6,6 +6,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 using Soundify.DAL.PostgreSQL;
+using Soundify.DAL.PostgreSQL.Repository.db;
+using Soundify.DAL.PostgreSQL.Repository.Interfaces.db;
+using Soundify.Managers;
+using Soundify.Managers.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,8 +32,10 @@ builder.Services.AddDbContext<SoundifyDbContext>(options =>
 });
 
 builder.Services.AddScoped<IArtistRepository, ArtistRepository>();
+builder.Services.AddScoped<IArtistSmRepository, ArtistSmRepository>();
 
 builder.Services.AddScoped<IArtistManager, ArtistManager>();
+builder.Services.AddScoped<IArtistSmManager, ArtistSmManager>();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>

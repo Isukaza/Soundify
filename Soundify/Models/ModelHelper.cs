@@ -12,4 +12,13 @@ public static class ModelHelper
             Name = artist.Name,
             ImageFilePath = artist.ImageFilePath
         };
+
+    public static ArtistSmResponse ToArtistSmResponse(this ArtistSocialMedia artistSm) =>
+        new()
+        {
+            Id = artistSm.Id,
+            ArtistId = artistSm.ArtistId,
+            Platform = artistSm.Platform,
+            Url = artistSm.Url
+        };
 }
