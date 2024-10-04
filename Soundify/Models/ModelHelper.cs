@@ -55,4 +55,24 @@ public static class ModelHelper
             Platform = artistSm.Platform,
             Url = artistSm.Url
         };
+
+    public static SingleResponse ToSingleResponse(this SingleTrack single)
+    {
+        var singleResponse = new SingleResponse
+        {
+            Id = single.Id,
+            TrackId = single.TrackId,
+            ArtistId = single.ArtistId,
+            CoverFilePath = single.CoverFilePath,
+            Title = single.Track?.Title ?? string.Empty,
+            Duration = single.Track?.Duration ?? 0,
+            ReleaseDate = single.Track?.ReleaseDate ?? DateTime.MinValue,
+            FilePath = single.Track?.FilePath ?? string.Empty,
+        };
+        
+        if (single.Track is not null && single.Track.RatingCount > 0 && single.Track.TotalRating > 0)
+            singleResponse.Rating = Math.Round(single.Track.TotalRating / single.Track.RatingCount, 2);
+
+        return singleResponse;
+    }
 }
