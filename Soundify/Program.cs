@@ -27,6 +27,10 @@ builder.Services.AddDbContext<SoundifyDbContext>(options =>
     options.UseNpgsql(connectionString);
 });
 
+builder.Services.AddScoped<IArtistRepository, ArtistRepository>();
+
+builder.Services.AddScoped<IArtistManager, ArtistManager>();
+
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
