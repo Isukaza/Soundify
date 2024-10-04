@@ -1,7 +1,11 @@
 using System.Reflection;
 using System.Text.Json.Serialization;
+
 using Microsoft.AspNetCore.HttpLogging;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+
+using Soundify.DAL.PostgreSQL;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +19,12 @@ builder.Services.AddHttpLogging(logging =>
                             | HttpLoggingFields.ResponseBody
                             | HttpLoggingFields.Duration
                             | HttpLoggingFields.ResponseStatusCode;
+});
+
+builder.Services.AddDbContext<SoundifyDbContext>(options =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("PostgreSQL");
+    options.UseNpgsql(connectionString);
 });
 
 builder.Services.AddControllers()
