@@ -35,11 +35,13 @@ builder.Services.AddScoped<IAlbumRepository, AlbumRepository>();
 builder.Services.AddScoped<IGenreRepository, GenreRepository>();
 builder.Services.AddScoped<IArtistRepository, ArtistRepository>();
 builder.Services.AddScoped<IArtistSmRepository, ArtistSmRepository>();
+builder.Services.AddScoped<ITrackRepository, TrackRepository>();
 
 builder.Services.AddScoped<IAlbumManager, AlbumManager>();
 builder.Services.AddScoped<IGenreManager, GenreManager>();
 builder.Services.AddScoped<IArtistManager, ArtistManager>();
 builder.Services.AddScoped<IArtistSmManager, ArtistSmManager>();
+builder.Services.AddScoped<ITrackManager, TrackManager>();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>

@@ -23,6 +23,23 @@ public static class ModelHelper
             CoverFilePath = album.CoverFilePath
         };
 
+    public static TrackResponse ToTrackResponse(this Track track)
+    {
+        var trackResponse = new TrackResponse
+        {
+            Id = track.Id,
+            Title = track.Title,
+            Genre = track.Genre.Name,
+            FilePath = track.FilePath,
+            Duration = track.Duration,
+        };
+
+        if (track.TotalRating > 0 && track.RatingCount > 0)
+            trackResponse.Rating = Math.Round(track.TotalRating / track.RatingCount, 2);
+
+        return trackResponse;
+    }
+
     public static GenreResponse ToGenreResponse(this Genre genre) =>
         new()
         {
