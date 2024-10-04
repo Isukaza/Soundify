@@ -56,6 +56,13 @@ public static class ModelHelper
             Url = artistSm.Url
         };
 
+    public static TrackRatingResponse ToTrackRatingResponse(this TrackRating trackRating) =>
+        new()
+        {
+            Id = trackRating.Id,
+            Rating = trackRating.Rating
+        };
+
     public static SingleResponse ToSingleResponse(this SingleTrack single)
     {
         var singleResponse = new SingleResponse
