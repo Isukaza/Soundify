@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soundify", "Soundify\Soundify.csproj", "{661DA0F9-2157-4051-859A-55548E12F038}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Helpers", "Helpers\Helpers.csproj", "{426F8433-65F0-4E22-A483-33AE2E7867E3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soundify.DAL.PostgreSQL", "Soundify.DAL.PostgreSQL\Soundify.DAL.PostgreSQL.csproj", "{39CCB426-017E-4214-AE62-49A8EFB7E743}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soundify.Tests", "Soundify.Tests\Soundify.Tests.csproj", "{4D03AF10-22CE-49C6-9A2B-BD16E6F47B12}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{661DA0F9-2157-4051-859A-55548E12F038}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{661DA0F9-2157-4051-859A-55548E12F038}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{661DA0F9-2157-4051-859A-55548E12F038}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{661DA0F9-2157-4051-859A-55548E12F038}.Release|Any CPU.Build.0 = Release|Any CPU
+		{426F8433-65F0-4E22-A483-33AE2E7867E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{426F8433-65F0-4E22-A483-33AE2E7867E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{426F8433-65F0-4E22-A483-33AE2E7867E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{426F8433-65F0-4E22-A483-33AE2E7867E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39CCB426-017E-4214-AE62-49A8EFB7E743}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39CCB426-017E-4214-AE62-49A8EFB7E743}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39CCB426-017E-4214-AE62-49A8EFB7E743}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39CCB426-017E-4214-AE62-49A8EFB7E743}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D03AF10-22CE-49C6-9A2B-BD16E6F47B12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D03AF10-22CE-49C6-9A2B-BD16E6F47B12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D03AF10-22CE-49C6-9A2B-BD16E6F47B12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D03AF10-22CE-49C6-9A2B-BD16E6F47B12}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
