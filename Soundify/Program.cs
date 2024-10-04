@@ -32,10 +32,12 @@ builder.Services.AddDbContext<SoundifyDbContext>(options =>
 });
 
 builder.Services.AddScoped<IAlbumRepository, AlbumRepository>();
+builder.Services.AddScoped<IGenreRepository, GenreRepository>();
 builder.Services.AddScoped<IArtistRepository, ArtistRepository>();
 builder.Services.AddScoped<IArtistSmRepository, ArtistSmRepository>();
 
 builder.Services.AddScoped<IAlbumManager, AlbumManager>();
+builder.Services.AddScoped<IGenreManager, GenreManager>();
 builder.Services.AddScoped<IArtistManager, ArtistManager>();
 builder.Services.AddScoped<IArtistSmManager, ArtistSmManager>();
 

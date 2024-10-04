@@ -23,6 +23,13 @@ public static class ModelHelper
             CoverFilePath = album.CoverFilePath
         };
 
+    public static GenreResponse ToGenreResponse(this Genre genre) =>
+        new()
+        {
+            Id = genre.Id,
+            Name = genre.Name
+        };
+
     public static ArtistSmResponse ToArtistSmResponse(this ArtistSocialMedia artistSm) =>
         new()
         {
