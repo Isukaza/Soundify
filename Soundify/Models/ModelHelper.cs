@@ -89,4 +89,19 @@ public static class ModelHelper
 
         return singleResponse;
     }
+
+    public static PlayListResponse ToPlayListResponse(this PlayList playList) =>
+        new()
+        {
+            Id = playList.Id,
+            Title = playList.Title,
+            Description = playList.Description
+        };
+
+    public static PlayListTrackResponse ToPlayListTrackResponse(this PlayListTrack playListTrack) =>
+        new()
+        {
+            TrackId = playListTrack.TrackId,
+            PlaylistId = playListTrack.PlaylistId
+        };
 }
