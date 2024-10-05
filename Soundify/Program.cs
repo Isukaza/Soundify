@@ -6,10 +6,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 using Soundify.DAL.PostgreSQL;
+using Soundify.DAL.PostgreSQL.Repository.Base;
 using Soundify.DAL.PostgreSQL.Repository.db;
+using Soundify.DAL.PostgreSQL.Repository.Interfaces.Base;
 using Soundify.DAL.PostgreSQL.Repository.Interfaces.db;
 using Soundify.Managers;
 using Soundify.Managers.Interfaces;
+
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +35,15 @@ builder.Services.AddDbContext<SoundifyDbContext>(options =>
     options.UseNpgsql(connectionString);
 });
 
+builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>
+{
+    var redisConnectionUrl = builder.Configuration.GetConnectionString("Redis");
+    if (string.IsNullOrEmpty(redisConnectionUrl))
+        throw new InvalidOperationException("RedisConnectionUrl is not configured.");
+
+    return ConnectionMultiplexer.Connect(redisConnectionUrl);
+});
+
 builder.Services.AddScoped<IAlbumRepository, AlbumRepository>();
 builder.Services.AddScoped<IGenreRepository, GenreRepository>();
 builder.Services.AddScoped<IArtistRepository, ArtistRepository>();
@@ -41,6 +54,7 @@ builder.Services.AddScoped<ISingleRepository, SingleRepository>();
 builder.Services.AddScoped<ITrackRepository, TrackRepository>();
 builder.Services.AddScoped<ITrackRatingRepository, TrackRatingRepository>();
 builder.Services.AddScoped<IUserFavoriteRepository, UserFavoriteRepository>();
+builder.Services.AddScoped<ICacheRepositoryBase, CacheRepositoryBase>();
 
 builder.Services.AddScoped<IAlbumManager, AlbumManager>();
 builder.Services.AddScoped<IGenreManager, GenreManager>();
