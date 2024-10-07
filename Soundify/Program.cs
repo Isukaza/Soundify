@@ -1,15 +1,19 @@
 using System.Reflection;
 using System.Text.Json.Serialization;
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
+using Soundify.Configuration;
 using Soundify.DAL.PostgreSQL;
 using Soundify.DAL.PostgreSQL.Repository.Base;
 using Soundify.DAL.PostgreSQL.Repository.db;
 using Soundify.DAL.PostgreSQL.Repository.Interfaces.Base;
 using Soundify.DAL.PostgreSQL.Repository.Interfaces.db;
+using Soundify.DAL.PostgreSQL.Roles;
 using Soundify.Managers;
 using Soundify.Managers.Interfaces;
 
@@ -28,6 +32,30 @@ builder.Services.AddHttpLogging(logging =>
                             | HttpLoggingFields.Duration
                             | HttpLoggingFields.ResponseStatusCode;
 });
+
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy(nameof(RolePolicy.RequireAnyAdminOrPublisher), policy =>
+        policy.RequireRole(nameof(UserRole.SuperAdmin), nameof(UserRole.Admin), nameof(UserRole.Publisher)))
+    .AddPolicy(nameof(RolePolicy.RequireAnyAdmin), policy =>
+        policy.RequireRole(nameof(UserRole.SuperAdmin), nameof(UserRole.Admin)))
+    .AddPolicy(nameof(RolePolicy.RequireContentEditors), policy =>
+        policy.RequireRole(nameof(UserRole.SuperAdmin), nameof(UserRole.Admin), nameof(UserRole.Manager),
+            nameof(UserRole.Publisher)));
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = JwtConfig.Values.Issuer,
+            ValidateAudience = true,
+            ValidAudience = JwtConfig.Values.Audience,
+            ValidateLifetime = true,
+            IssuerSigningKey = JwtConfig.Values.Key,
+            ValidateIssuerSigningKey = true,
+        };
+    });
 
 builder.Services.AddDbContext<SoundifyDbContext>(options =>
 {
@@ -87,6 +115,35 @@ builder.Services.AddSwaggerGen(options =>
 
     options.IncludeXmlComments(
         Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
+    
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description =
+            "JWT Authorization header using the Bearer scheme. \r\n\r\n" +
+            "Enter 'Bearer' [space and then your token in the text input below. \r\n\r\n" +
+            "Example: 'Bearer HHH.PPP.CCC'",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Scheme = "Bearer"
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                },
+                Scheme = "OAuth 2.0",
+                Name = "Bearer",
+                In = ParameterLocation.Header
+            },
+            new List<string>()
+        }
+    });
 });
 
 var app = builder.Build();
@@ -106,6 +163,9 @@ app.UseSwaggerUI(options =>
 });
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 
