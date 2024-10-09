@@ -39,6 +39,14 @@ public class SoundifyDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        #region Indexes
+
+        modelBuilder.Entity<Artist>()
+            .HasIndex(a => a.PublisherId)
+            .IsUnique();
+
+        #endregion
+
         #region Artists + ArtistSocialMedia
 
         modelBuilder.Entity<ArtistSocialMedia>()

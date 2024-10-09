@@ -6,6 +6,9 @@ namespace Soundify.DAL.PostgreSQL.Models.db;
 public record Artist : BaseDbEntity
 {
     [Required]
+    public Guid PublisherId { get; set; }
+    
+    [Required]
     [StringLength(100)]
     public string Name { get; set; }
 

@@ -25,6 +25,7 @@ public class ArtistManager : IArtistManager
 
         var artist = new Artist
         {
+            PublisherId = artistData.PublisherId,
             Name = artistData.Name,
             ImageFilePath = string.Empty
         };

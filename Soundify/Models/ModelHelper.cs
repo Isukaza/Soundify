@@ -9,6 +9,7 @@ public static class ModelHelper
         new()
         {
             Id = artist.Id,
+            PublisherId = artist.PublisherId,
             Name = artist.Name,
             ImageFilePath = artist.ImageFilePath
         };
