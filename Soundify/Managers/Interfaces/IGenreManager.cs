@@ -12,4 +12,5 @@ public interface IGenreManager
     Task<bool> DeleteGenreAsync(Genre genre);
 
     Task<bool> HasRelatedRecordsAsync(Guid genreId);
+    Task<bool> GenreExistsAsync(Guid genreId);
 }

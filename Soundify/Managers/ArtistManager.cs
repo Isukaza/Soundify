@@ -18,6 +18,9 @@ public class ArtistManager : IArtistManager
     public Task<Artist> GetArtistByIdAsync(Guid artistId) =>
         _artistRepo.GetArtistByIdAsync(artistId);
 
+    public async Task<Artist> GetPublisherArtistByIdAsync(Guid publisherId, Guid artistId) =>
+        await _artistRepo.GetPublisherArtistByIdAsync(publisherId, artistId);
+
     public async Task<Artist> CreateArtistAsync(ArtistCreateRequest artistData)
     {
         if (artistData is null)
@@ -25,6 +28,7 @@ public class ArtistManager : IArtistManager
 
         var artist = new Artist
         {
+            PublisherId = artistData.PublisherId,
             Name = artistData.Name,
             ImageFilePath = string.Empty
         };
@@ -51,4 +55,7 @@ public class ArtistManager : IArtistManager
 
     public async Task<bool> ArtistExistsAsync(Guid artistId) =>
         await _artistRepo.ArtistExists(artistId);
+
+    public async Task<bool> IsPublisherOfArtistAsync(Guid publisherId, Guid artistId) =>
+        await _artistRepo.IsPublisherOfArtistAsync(publisherId, artistId);
 }

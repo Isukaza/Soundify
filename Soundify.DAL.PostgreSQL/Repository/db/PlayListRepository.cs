@@ -18,8 +18,9 @@ public class PlayListRepository : DbRepositoryBase<PlayList>, IPlayListRepositor
     public async Task<PlayList> GetPlayListByIdAsync(Guid playListId) =>
         await DbContext.Playlists.FirstOrDefaultAsync(pl => pl.Id == playListId);
 
-    public async Task<bool> PlayListExistExistsAsync(Guid playListId) =>
+    public async Task<Guid?> GetPlaylistOwnerId(Guid playlistId) =>
         await DbContext.Playlists
-            .AsNoTracking()
-            .AnyAsync(pl => pl.Id == playListId);
+            .Where(pl => pl.Id == playlistId)
+            .Select(pl => pl.UserId)
+            .FirstOrDefaultAsync();
 }

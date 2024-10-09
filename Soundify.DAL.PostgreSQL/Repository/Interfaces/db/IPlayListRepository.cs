@@ -6,6 +6,5 @@ namespace Soundify.DAL.PostgreSQL.Repository.Interfaces.db;
 public interface IPlayListRepository : IDbRepositoryBase<PlayList>
 {
     Task<PlayList> GetPlayListByIdAsync(Guid playListId);
-
-    Task<bool> PlayListExistExistsAsync(Guid playListId);
+    Task<Guid?> GetPlaylistOwnerId(Guid playlistId);
 }

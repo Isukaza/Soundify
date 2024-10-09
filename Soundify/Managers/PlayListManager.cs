@@ -22,6 +22,9 @@ public class PlayListManager : IPlayListManager
     public async Task<PlayList> GetPlayListByIdAsync(Guid playListId) =>
         await _playListRepo.GetPlayListByIdAsync(playListId);
 
+    public async Task<Guid?> GetPlaylistOwnerId(Guid playlistId) =>
+        await _playListRepo.GetPlaylistOwnerId(playlistId);
+
     public async Task<PlayListTrack> GetTrackByTrackIdAsync(Guid playListId, Guid trackId) =>
         await _playListTrackRepo.GetTrackByPlayListIdAsync(playListId, trackId);
 
@@ -30,14 +33,17 @@ public class PlayListManager : IPlayListManager
             .GetTracksByPlayListIdAsync(playListId)
             .ToListAsync();
 
-    public async Task<PlayList> CreatePlayListAsync(PlayListCreateRequest playListData)
+    public async Task<List<PlayListTrack>> GetUserPlaylistTracksAsync(Guid userId, Guid playListId) =>
+        await _playListTrackRepo.GetUserPlaylistTracksAsync(userId, playListId);
+
+    public async Task<PlayList> CreatePlayListAsync(Guid userId, PlayListCreateRequest playListData)
     {
         if (playListData is null)
             return null;
 
         var playList = new PlayList
         {
-            UserId = playListData.UserId,
+            UserId = userId,
             Title = playListData.Title,
             Description = playListData.Description
         };
@@ -79,9 +85,6 @@ public class PlayListManager : IPlayListManager
     public async Task<bool> RemoveTrackFromPlayList(PlayListTrack playListTrack) =>
         playListTrack is not null && await _playListTrackRepo.DeleteAsync(playListTrack);
 
-    public async Task<bool> PlayListExistExistsAsync(Guid playListId) =>
-        await _playListRepo.PlayListExistExistsAsync(playListId);
-
-    public async Task<bool> TrackExistExistsAsync(Guid playListId, Guid trakId) =>
-        await _playListTrackRepo.PlayListTrackExistExistsAsync(playListId, trakId);
+    public async Task<bool> TrackExistsAsync(Guid playListId, Guid trakId) =>
+        await _playListTrackRepo.PlayListTrackExistsAsync(playListId, trakId);
 }

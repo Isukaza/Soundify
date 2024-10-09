@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+
 using Soundify.DAL.PostgreSQL.Models.db;
 using Soundify.DAL.PostgreSQL.Repository.Interfaces.db;
 using Soundify.Managers.Interfaces;
@@ -22,14 +23,14 @@ public class TrackRatingManager : ITrackRatingManager
     public async Task<List<TrackRating>> GetTrackRatingByTrackIdAsync(Guid trackId) =>
         await _trackRatingRepo.GetTrackRatingByTrackIdAsync(trackId).ToListAsync();
 
-    public async Task<TrackRating> AddTrackRatingAsync(TrackRatingCreateRequest trackRatingData)
+    public async Task<TrackRating> AddTrackRatingAsync(Guid userId, TrackRatingCreateRequest trackRatingData)
     {
         if (trackRatingData is null)
             return null;
 
         var trackRating = new TrackRating
         {
-            UserId = trackRatingData.UserId,
+            UserId = userId,
             TrackId = trackRatingData.TrackId,
             Rating = trackRatingData.Rating
         };

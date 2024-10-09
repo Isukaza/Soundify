@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Soundify.DAL.PostgreSQL.Models.db;
 using Soundify.DAL.PostgreSQL.Repository.Interfaces.db;
 using Soundify.Managers.Interfaces;
-using Soundify.Models.Request.Create;
 
 namespace Soundify.Managers;
 
@@ -24,15 +23,12 @@ public class UserFavoriteManager : IUserFavoriteManager
             .GetUserFavoriteByUserIdAsync(userFavoriteId)
             .ToListAsync();
 
-    public async Task<UserFavorite> AddFavoriteAsync(UserFavoriteCreateRequest favoriteData)
+    public async Task<UserFavorite> AddFavoriteAsync(Guid userId, Guid trackId)
     {
-        if (favoriteData is null)
-            return null;
-
         var userFavorite = new UserFavorite
         {
-            UserId = favoriteData.UserId,
-            TrackId = favoriteData.TrackId
+            UserId = userId,
+            TrackId = trackId
         };
 
         return await _userFavoriteRepo.CreateAsync(userFavorite);
@@ -41,6 +37,6 @@ public class UserFavoriteManager : IUserFavoriteManager
     public async Task<bool> DeleteFavoriteAsync(UserFavorite favorite) =>
         favorite is not null && await _userFavoriteRepo.DeleteAsync(favorite);
 
-    public Task<bool> FavoriteExistsAsync(Guid userId, Guid trackId) =>
-        _userFavoriteRepo.FavoriteExistsAsync(userId, trackId);
+    public async Task<bool> FavoriteExistsAsync(Guid userId, Guid trackId) =>
+        await _userFavoriteRepo.FavoriteExistsAsync(userId, trackId);
 }

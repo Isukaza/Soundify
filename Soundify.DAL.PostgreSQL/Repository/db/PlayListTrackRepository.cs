@@ -22,7 +22,12 @@ public class PlayListTrackRepository : DbRepositoryBase<PlayListTrack>, IPlayLis
     public IQueryable<PlayListTrack> GetTracksByPlayListIdAsync(Guid playListId) =>
         DbContext.PlaylistTracks.Where(plt => plt.PlaylistId == playListId);
 
-    public async Task<bool> PlayListTrackExistExistsAsync(Guid playListId, Guid trackId) =>
+    public async Task<List<PlayListTrack>> GetUserPlaylistTracksAsync(Guid userId, Guid playListId)=>
+        await DbContext.PlaylistTracks
+            .Where(plt => plt.PlaylistId == playListId && plt.PlayList.UserId == userId) 
+            .ToListAsync();
+
+    public async Task<bool> PlayListTrackExistsAsync(Guid playListId, Guid trackId) =>
         await DbContext.PlaylistTracks
             .AsNoTracking()
             .AnyAsync(plt => plt.PlaylistId == playListId && plt.TrackId == trackId);

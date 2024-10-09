@@ -7,5 +7,6 @@ public interface IUserFavoriteRepository : IDbRepositoryBase<UserFavorite>
 {
     Task<UserFavorite> GetFavoriteByIdAsync(Guid favoriteId);
     IQueryable<UserFavorite> GetUserFavoriteByUserIdAsync(Guid userFavoriteId);
+
     Task<bool> FavoriteExistsAsync(Guid userId, Guid trackId);
 }

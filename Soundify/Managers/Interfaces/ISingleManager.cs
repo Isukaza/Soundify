@@ -7,6 +7,8 @@ namespace Soundify.Managers.Interfaces;
 public interface ISingleManager
 {
     Task<SingleTrack> GetSingleTrack(Guid singleId);
+    Task<SingleTrack> GetPublisherSingleByIdAsync(Guid publisherId, Guid singleId);
+
     Task<SingleTrack> CreateSingleTrack(SingleCreateRequest trackData);
     Task<bool> UpdateSingleTrack(SingleTrack single, SingleUpdateRequest trackData);
     Task<bool> DeleteSingleTrack(SingleTrack track);

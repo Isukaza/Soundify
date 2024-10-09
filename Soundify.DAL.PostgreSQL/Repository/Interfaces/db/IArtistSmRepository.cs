@@ -5,6 +5,7 @@ namespace Soundify.DAL.PostgreSQL.Repository.Interfaces.db;
 
 public interface IArtistSmRepository : IDbRepositoryBase<ArtistSocialMedia>
 {
-    Task<ArtistSocialMedia> GetArtistSocialMediaByIdAsync(Guid socialMediaId);
+    Task<ArtistSocialMedia> GetSocialMediaByIdAsync(Guid socialMediaId);
+    Task<ArtistSocialMedia> GetPublisherSocialMediaByIdAsync(Guid publisherId, Guid socialMediaId);
     IQueryable<ArtistSocialMedia> GetSocialMediasByArtistId(Guid artistId);
 }

@@ -5,9 +5,6 @@ namespace Soundify.Models.Request.Create;
 public class TrackRatingCreateRequest
 {
     [Required]
-    public Guid UserId { get; init; }
-
-    [Required]
     public Guid TrackId { get; init; }
     
     [Required]

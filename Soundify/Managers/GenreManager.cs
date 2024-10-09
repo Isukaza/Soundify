@@ -48,6 +48,9 @@ public class GenreManager : IGenreManager
     public async Task<bool> DeleteGenreAsync(Genre genre) =>
         genre is not null && await _genreRepo.DeleteAsync(genre);
 
+    public async Task<bool> GenreExistsAsync(Guid genreId) =>
+        await _genreRepo.GenreExistsAsync(genreId);
+
     public async Task<bool> HasRelatedRecordsAsync(Guid genreId) =>
         await _genreRepo.HasRelatedRecords(genreId);
 }

@@ -7,6 +7,6 @@ public interface IPlayListTrackRepository : IDbRepositoryBase<PlayListTrack>
 {
     Task<PlayListTrack> GetTrackByPlayListIdAsync(Guid playListId, Guid trackId);
     IQueryable<PlayListTrack> GetTracksByPlayListIdAsync(Guid playListId);
-    
-    Task<bool> PlayListTrackExistExistsAsync(Guid playListId, Guid trackId);
+    Task<List<PlayListTrack>> GetUserPlaylistTracksAsync(Guid userId, Guid playListId);
+    Task<bool> PlayListTrackExistsAsync(Guid playListId, Guid trackId);
 }

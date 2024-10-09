@@ -17,4 +17,7 @@ public class AlbumRepository : DbRepositoryBase<Album>, IAlbumRepository
 
     public async Task<Album> GetAlbumByIdAsync(Guid albumId) =>
         await DbContext.Albums.FirstOrDefaultAsync(a => a.Id == albumId);
+    
+    public async Task<Album> GetPublisherAlbumByIdAsync(Guid publisherId, Guid albumId) =>
+        await DbContext.Albums.FirstOrDefaultAsync(a => a.Id == albumId && a.Artist.PublisherId == publisherId);
 }

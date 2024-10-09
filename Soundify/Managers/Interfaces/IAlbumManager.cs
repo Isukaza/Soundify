@@ -7,7 +7,9 @@ namespace Soundify.Managers.Interfaces;
 public interface IAlbumManager
 {
     Task<Album> GetAlbumByIdAsync(Guid albumId);
-    Task<Album> CreateAlbumAsync(Artist artist, AlbumCreateRequest albumData);
+    Task<Album> GetPublisherAlbumByIdAsync(Guid publisherId, Guid albumId);
+
+    Task<Album> CreateAlbumAsync(AlbumCreateRequest albumData);
     Task<bool> UpdateAlbumAsync(Album album, AlbumUpdateRequest albumData);
     Task<bool> DeleteAlbumAsync(Album album);
 }

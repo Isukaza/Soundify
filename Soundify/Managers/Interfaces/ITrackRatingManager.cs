@@ -8,7 +8,7 @@ public interface ITrackRatingManager
 {
     Task<TrackRating> GetTrackRatingByIdAsync(Guid ratingId);
     Task<List<TrackRating>> GetTrackRatingByTrackIdAsync(Guid trackId);
-    Task<TrackRating> AddTrackRatingAsync(TrackRatingCreateRequest trackRatingData);
+    Task<TrackRating> AddTrackRatingAsync(Guid userId, TrackRatingCreateRequest trackRatingData);
     Task<bool> UpdateTrackRatingAsync(TrackRating trackRating, TrackRatingUpdateRequest trackRatingData);
     Task<bool> DeleteTrackRatingAsync(TrackRating trackRating);
 

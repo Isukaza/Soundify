@@ -19,4 +19,8 @@ public class SingleRepository : DbRepositoryBase<SingleTrack>, ISingleRepository
         await DbContext.SingleTracks
             .Include(t => t.Track)
             .FirstOrDefaultAsync(st => st.Id == singleId);
+
+    public async Task<SingleTrack> GetPublisherSingleByIdAsync(Guid publisherId, Guid singleId) =>
+        await DbContext.SingleTracks
+            .FirstOrDefaultAsync(st => st.Id == singleId && st.Artist.PublisherId == publisherId);
 }
