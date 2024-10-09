@@ -7,6 +7,6 @@ public interface ITrackRatingRepository : IDbRepositoryBase<TrackRating>
 {
     Task<TrackRating> GetTrackRatingByIdAsync(Guid ratingId);
     IQueryable<TrackRating> GetTrackRatingByTrackIdAsync(Guid trackId);
-    
+
     Task<bool> TrackRatingExistsAsync(Guid userId, Guid trackId);
 }

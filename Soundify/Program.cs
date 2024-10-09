@@ -72,6 +72,9 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(_ =>
     return ConnectionMultiplexer.Connect(redisConnectionUrl);
 });
 
+builder.Services.AddScoped<ICacheRepositoryBase, CacheRepositoryBase>();
+builder.Services.AddScoped<IAuthorizationManager, AuthorizationManager>();
+
 builder.Services.AddScoped<IAlbumRepository, AlbumRepository>();
 builder.Services.AddScoped<IGenreRepository, GenreRepository>();
 builder.Services.AddScoped<IArtistRepository, ArtistRepository>();
@@ -82,7 +85,6 @@ builder.Services.AddScoped<ISingleRepository, SingleRepository>();
 builder.Services.AddScoped<ITrackRepository, TrackRepository>();
 builder.Services.AddScoped<ITrackRatingRepository, TrackRatingRepository>();
 builder.Services.AddScoped<IUserFavoriteRepository, UserFavoriteRepository>();
-builder.Services.AddScoped<ICacheRepositoryBase, CacheRepositoryBase>();
 
 builder.Services.AddScoped<IAlbumManager, AlbumManager>();
 builder.Services.AddScoped<IGenreManager, GenreManager>();
