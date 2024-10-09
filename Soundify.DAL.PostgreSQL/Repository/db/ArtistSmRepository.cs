@@ -15,8 +15,12 @@ public class ArtistSmRepository : DbRepositoryBase<ArtistSocialMedia>, IArtistSm
 
     #endregion
 
-    public async Task<ArtistSocialMedia> GetArtistSocialMediaByIdAsync(Guid socialMediaId) =>
+    public async Task<ArtistSocialMedia> GetSocialMediaByIdAsync(Guid socialMediaId) =>
         await DbContext.ArtistSocialMedias.FirstOrDefaultAsync(asm => asm.Id == socialMediaId);
+
+    public async Task<ArtistSocialMedia> GetPublisherSocialMediaByIdAsync(Guid publisherId, Guid socialMediaId) =>
+        await DbContext.ArtistSocialMedias
+            .FirstOrDefaultAsync(asm => asm.Id == socialMediaId && asm.Artist.PublisherId == publisherId);
 
     public IQueryable<ArtistSocialMedia> GetSocialMediasByArtistId(Guid artistId) =>
         DbContext.ArtistSocialMedias.Where(asm => asm.ArtistId == artistId);

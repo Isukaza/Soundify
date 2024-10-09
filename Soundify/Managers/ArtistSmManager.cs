@@ -18,7 +18,10 @@ public class ArtistSmManager : IArtistSmManager
     }
 
     public async Task<ArtistSocialMedia> GetSocialMediaByIdAsync(Guid socialMediaId) =>
-        await _artistSmRepo.GetArtistSocialMediaByIdAsync(socialMediaId);
+        await _artistSmRepo.GetSocialMediaByIdAsync(socialMediaId);
+
+    public async Task<ArtistSocialMedia> GetPublisherSocialMediaByIdAsync(Guid publisherId, Guid socialMediaId) =>
+        await _artistSmRepo.GetPublisherSocialMediaByIdAsync(publisherId, socialMediaId);
 
     public async Task<List<ArtistSocialMedia>> GetSocialMediaByArtistIdAsync(Guid artistId) =>
         await _artistSmRepo
