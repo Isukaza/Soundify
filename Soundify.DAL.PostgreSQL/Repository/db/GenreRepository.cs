@@ -22,4 +22,9 @@ public class GenreRepository : DbRepositoryBase<Genre>, IGenreRepository
         await DbContext.Genres
             .AsNoTracking()
             .AnyAsync(g => g.Id == genreId && g.Tracks.Any());
+
+    public async Task<bool> GenreExistsAsync(Guid genreId) =>
+        await DbContext.Genres
+            .AsNoTracking()
+            .AnyAsync(g => g.Id == genreId);
 }
