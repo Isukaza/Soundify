@@ -18,6 +18,9 @@ public class TrackManager : ITrackManager
     public async Task<Track> GetTrackByIdAsync(Guid trackId) =>
         await _trackRepo.GetTrackByIdAsync(trackId);
 
+    public async Task<Track> GetPublisherTrackByIdAsync(Guid publisherId, Guid trackId) =>
+        await _trackRepo.GetPublisherTrackByIdAsync(publisherId, trackId);
+
     public async Task<Track> CreateTrackAsync(TrackCreateRequest trackData, Genre genre)
     {
         if (trackData is null)
@@ -55,4 +58,7 @@ public class TrackManager : ITrackManager
 
     public async Task<bool> TrackExistsAsync(Guid trackId) =>
         await _trackRepo.TrackExistsAsync(trackId);
+
+    public async Task<bool> IsTrackInAlbumOrSingleAsync(Guid trackId) =>
+        await _trackRepo.IsTrackInAlbumOrSingleAsync(trackId);
 }

@@ -30,7 +30,7 @@ public static class ModelHelper
         {
             Id = track.Id,
             Title = track.Title,
-            Genre = track.Genre.Name,
+            Genre = track.Genre?.Name ?? string.Empty,
             FilePath = track.FilePath,
             Duration = track.Duration,
         };
