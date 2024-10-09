@@ -14,6 +14,7 @@ namespace Soundify.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class SingleController : Controller
 {
     private readonly IArtistManager _artistManager;
