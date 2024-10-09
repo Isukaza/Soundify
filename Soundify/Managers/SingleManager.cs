@@ -18,6 +18,9 @@ public class SingleManager : ISingleManager
     public async Task<SingleTrack> GetSingleTrack(Guid singleId) =>
         await _singleRepo.GetSingleByIdAsync(singleId);
 
+    public async Task<SingleTrack> GetPublisherSingleByIdAsync(Guid publisherId, Guid singleId) =>
+        await _singleRepo.GetPublisherSingleByIdAsync(publisherId, singleId);
+
     public async Task<SingleTrack> CreateSingleTrack(SingleCreateRequest trackData)
     {
         if (trackData is null || trackData.Track is null)

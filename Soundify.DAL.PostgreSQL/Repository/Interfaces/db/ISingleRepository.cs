@@ -6,4 +6,5 @@ namespace Soundify.DAL.PostgreSQL.Repository.Interfaces.db;
 public interface ISingleRepository : IDbRepositoryBase<SingleTrack>
 {
     Task<SingleTrack> GetSingleByIdAsync(Guid singleId);
+    Task<SingleTrack> GetPublisherSingleByIdAsync(Guid publisherId, Guid singleId);
 }
