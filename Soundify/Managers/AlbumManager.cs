@@ -18,14 +18,17 @@ public class AlbumManager : IAlbumManager
     public async Task<Album> GetAlbumByIdAsync(Guid albumId) =>
         await _albumRepo.GetAlbumByIdAsync(albumId);
 
-    public async Task<Album> CreateAlbumAsync(Artist artist, AlbumCreateRequest albumData)
+    public async Task<Album> GetPublisherAlbumByIdAsync(Guid publisherId, Guid albumId) =>
+        await _albumRepo.GetPublisherAlbumByIdAsync(publisherId, albumId);
+
+    public async Task<Album> CreateAlbumAsync(AlbumCreateRequest albumData)
     {
         if (albumData is null)
             return null;
 
         var album = new Album
         {
-            Artist = artist,
+            ArtistId = albumData.ArtistId,
             Title = albumData.Title,
             ReleaseDate = albumData.ReleaseDate,
             CoverFilePath = string.Empty,
