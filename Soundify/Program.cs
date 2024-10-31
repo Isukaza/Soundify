@@ -105,66 +105,71 @@ builder.Services.AddControllers()
     });
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
-{
-    options.SwaggerDoc(
-        "current",
-        new OpenApiInfo
+
+if (builder.Environment.IsDevelopment())
+    builder.Services.AddSwaggerGen(options =>
+    {
+        options.SwaggerDoc(
+            "current",
+            new OpenApiInfo
+            {
+                Title = "Music Service API",
+                Version = Assembly.GetExecutingAssembly().GetName().Version?.ToString()
+            });
+
+        options.IncludeXmlComments(
+            Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
+
+        options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
         {
-            Title = "Music Service API",
-            Version = Assembly.GetExecutingAssembly().GetName().Version?.ToString()
+            Description =
+                "JWT Authorization header using the Bearer scheme. \r\n\r\n" +
+                "Enter 'Bearer' [space and then your token in the text input below. \r\n\r\n" +
+                "Example: 'Bearer HHH.PPP.CCC'",
+            Name = "Authorization",
+            In = ParameterLocation.Header,
+            Scheme = "Bearer"
         });
 
-    options.IncludeXmlComments(
-        Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
-    
-    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Description =
-            "JWT Authorization header using the Bearer scheme. \r\n\r\n" +
-            "Enter 'Bearer' [space and then your token in the text input below. \r\n\r\n" +
-            "Example: 'Bearer HHH.PPP.CCC'",
-        Name = "Authorization",
-        In = ParameterLocation.Header,
-        Scheme = "Bearer"
-    });
-
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
+        options.AddSecurityRequirement(new OpenApiSecurityRequirement
         {
-            new OpenApiSecurityScheme
             {
-                Reference = new OpenApiReference
+                new OpenApiSecurityScheme
                 {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    },
+                    Scheme = "OAuth 2.0",
+                    Name = "Bearer",
+                    In = ParameterLocation.Header
                 },
-                Scheme = "OAuth 2.0",
-                Name = "Bearer",
-                In = ParameterLocation.Header
-            },
-            new List<string>()
-        }
+                new List<string>()
+            }
+        });
     });
-});
 
 var app = builder.Build();
 
 app.UseHttpLogging();
 
-app.UseSwagger(options =>
+if (app.Environment.IsDevelopment())
 {
-    options.RouteTemplate = "/api/{documentName}/swagger.json";
-    options.PreSerializeFilters.Add((document, _) => document.Servers.Clear());
-});
+    app.UseSwagger(options =>
+    {
+        options.RouteTemplate = "/api/{documentName}/swagger.json";
+        options.PreSerializeFilters.Add((document, _) => document.Servers.Clear());
+    });
 
-app.UseSwaggerUI(options =>
-{
-    options.SwaggerEndpoint("/api/current/swagger.json", "Music Service API");
-    options.RoutePrefix = "api";
-});
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/api/current/swagger.json", "Music Service API");
+        options.RoutePrefix = "api";
+    });
 
-app.UseHttpsRedirection();
+    app.UseHttpsRedirection();
+}
 
 app.UseAuthentication();
 app.UseAuthorization();
