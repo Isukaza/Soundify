@@ -1,10 +1,11 @@
 ﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
-EXPOSE 8433
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
+COPY ["../Helpers/Helpers.csproj", "Helpers/"]
+COPY ["../Soundify.DAL.PostgreSQL/Soundify.DAL.PostgreSQL.csproj", "Soundify.DAL.PostgreSQL/"]
 COPY ["Soundify/Soundify.csproj", "Soundify/"]
 
 RUN dotnet restore "Soundify/Soundify.csproj"
@@ -19,6 +20,7 @@ RUN dotnet publish "Soundify.csproj" -c Release -o /app/publish /p:UseAppHost=fa
 
 FROM base AS final
 WORKDIR /app
+
 COPY --from=publish /app/publish .
 
 ENTRYPOINT ["dotnet", "Soundify.dll"]
