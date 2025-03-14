@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Soundify.Tests", "Soundify.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RabbitMQ.Messaging", "RabbitMQ.Messaging\RabbitMQ.Messaging.csproj", "{94FF04A5-2A1D-43B4-BD87-0B86850B9B88}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{4A7DD5A2-183D-433C-89C4-86BA9926285B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{94FF04A5-2A1D-43B4-BD87-0B86850B9B88}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{94FF04A5-2A1D-43B4-BD87-0B86850B9B88}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{94FF04A5-2A1D-43B4-BD87-0B86850B9B88}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A7DD5A2-183D-433C-89C4-86BA9926285B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A7DD5A2-183D-433C-89C4-86BA9926285B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A7DD5A2-183D-433C-89C4-86BA9926285B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A7DD5A2-183D-433C-89C4-86BA9926285B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
