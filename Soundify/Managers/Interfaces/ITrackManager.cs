@@ -1,4 +1,7 @@
+using Domain.Interfaces;
+
 using Soundify.DAL.PostgreSQL.Models.db;
+using Soundify.Models;
 using Soundify.Models.Request.Create;
 using Soundify.Models.Request.Update;
 
@@ -7,6 +10,8 @@ namespace Soundify.Managers.Interfaces;
 public interface ITrackManager
 {
     Task<Track> GetTrackByIdAsync(Guid trackId);
+    Task<PagedTracksResult>GetTracksAsync(ITrackFilter filter);
+
     Task<Track> GetPublisherTrackByIdAsync(Guid publisherId, Guid trackId);
     
     Task<Track> CreateTrackAsync(TrackCreateRequest trackData, Genre genre);
