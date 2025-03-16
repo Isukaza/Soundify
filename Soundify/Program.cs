@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
+using Helpers;
+
 using Soundify.Configuration;
 using Soundify.DAL.PostgreSQL;
 using Soundify.DAL.PostgreSQL.Repository.Base;
@@ -28,10 +30,31 @@ builder.Services.AddHttpLogging(logging =>
 {
     logging.LoggingFields = HttpLoggingFields.RequestPath
                             | HttpLoggingFields.RequestBody
+#if DEBUG
                             | HttpLoggingFields.ResponseBody
+#endif
                             | HttpLoggingFields.Duration
                             | HttpLoggingFields.ResponseStatusCode;
+    logging.CombineLogs = true;
 });
+
+#if DEBUG
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        policyBuilder =>
+        {
+            policyBuilder.AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
+
+#endif
+
+JwtConfig.Values.Initialize(builder.Configuration, builder.Environment.IsDevelopment());
+RabbitMqConfig.Values.Initialize(builder.Configuration, builder.Environment.IsDevelopment());
 
 builder.Services.AddAuthorizationBuilder()
     .AddPolicy(nameof(RolePolicy.RequireAnyAdminOrPublisher), policy =>
@@ -52,14 +75,23 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = true,
             ValidAudience = JwtConfig.Values.Audience,
             ValidateLifetime = true,
-            IssuerSigningKey = JwtConfig.Values.Key,
+            IssuerSigningKey = JwtConfig.Values.SymmetricSecurityKey,
             ValidateIssuerSigningKey = true,
         };
     });
 
 builder.Services.AddDbContext<SoundifyDbContext>(options =>
 {
-    var connectionString = builder.Configuration.GetConnectionString("PostgreSQL");
+    var connectionString = DataHelper.GetRequiredString(
+        builder.Configuration.GetConnectionString("PostgreSQL"),
+        "ConnectionStrings:PostgreSQL");
+
+    if (!builder.Environment.IsDevelopment())
+    {
+        connectionString += $"Username={DbConfig.GetPostgreSqlUsernameFromEnv()};";
+        connectionString += $"Password={DbConfig.GetPostgreSqlPasswordFromEnv()}";
+    }
+
     options.UseNpgsql(connectionString);
 });
 
@@ -151,6 +183,12 @@ if (builder.Environment.IsDevelopment())
     });
 
 var app = builder.Build();
+
+#if DEBUG
+
+app.UseCors("AllowSpecificOrigin");
+
+#endif
 
 app.UseHttpLogging();
 
