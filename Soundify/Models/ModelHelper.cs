@@ -26,17 +26,31 @@ public static class ModelHelper
 
     public static TrackResponse ToTrackResponse(this Track track)
     {
+        ArgumentNullException.ThrowIfNull(track, nameof(track));
+        
         var trackResponse = new TrackResponse
         {
-            Id = track.Id,
-            Title = track.Title,
-            Genre = track.Genre?.Name ?? string.Empty,
+            TrackId = track.Id,
+            TrackName = track.Title,
             FilePath = track.FilePath,
             Duration = track.Duration,
+            Genre = track.Genre?.Name ?? string.Empty
         };
 
-        if (track.TotalRating > 0 && track.RatingCount > 0)
-            trackResponse.Rating = Math.Round(track.TotalRating / track.RatingCount, 2);
+        if (track.Album != null)
+        {
+            trackResponse.AlbumId = track.Album.Id;
+            trackResponse.AlbumName = track.Album.Title;
+
+            if (track.Album.Artist != null)
+            {
+                trackResponse.ArtistId = track.Album.Artist.Id;
+                trackResponse.ArtistName = track.Album.Artist.Name;
+            }
+        }
+
+        if (track.RatingCount > 0)
+            trackResponse.TotalRating = Math.Round(track.TotalRating / track.RatingCount, 2);
 
         return trackResponse;
     }

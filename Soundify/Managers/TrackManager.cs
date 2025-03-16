@@ -1,8 +1,15 @@
+using Microsoft.EntityFrameworkCore;
+
+using Domain.Interfaces;
+
+using Soundify.DAL.PostgreSQL.Extensions;
 using Soundify.DAL.PostgreSQL.Models.db;
 using Soundify.DAL.PostgreSQL.Repository.Interfaces.db;
 using Soundify.Managers.Interfaces;
+using Soundify.Models;
 using Soundify.Models.Request.Create;
 using Soundify.Models.Request.Update;
+using Soundify.Models.Response;
 
 namespace Soundify.Managers;
 
@@ -17,6 +24,41 @@ public class TrackManager : ITrackManager
 
     public async Task<Track> GetTrackByIdAsync(Guid trackId) =>
         await _trackRepo.GetTrackByIdAsync(trackId);
+
+    public async Task<PagedTracksResult> GetTracksAsync(ITrackFilter filter)
+    {
+        var query = _trackRepo
+            .GetFilteredTracks(filter)
+            .OrderBy(t => t.Title)
+            .ApplyPagination(filter, out var hasNextPage)
+            .Select(track => new TrackResponse
+            {
+                TrackId = track.Id,
+                TrackName = track.Title,
+                FilePath = track.FilePath,
+                Duration = track.Duration,
+                Genre = track.Genre.Name,
+                AlbumId = track.AlbumId ?? Guid.Empty,
+                AlbumName = track.Album != null ? track.Album.Title : string.Empty,
+                ArtistId = track.Album != null && track.Album.Artist != null ? track.Album.Artist.Id : Guid.Empty,
+                ArtistName = track.Album != null && track.Album.Artist != null ? track.Album.Artist.Name : string.Empty,
+                TotalRating = track.RatingCount > 0 ? track.TotalRating / track.RatingCount : 0
+            });
+        
+        var tracks = await query.ToListAsync();
+
+        if (hasNextPage)
+            tracks.RemoveAt(tracks.Count - 1);
+
+        foreach (var track in tracks)
+            track.TotalRating = Math.Round(track.TotalRating, 2);
+
+        return new PagedTracksResult
+        {
+            Tracks = tracks,
+            HasNextPage = hasNextPage
+        };
+    }
 
     public async Task<Track> GetPublisherTrackByIdAsync(Guid publisherId, Guid trackId) =>
         await _trackRepo.GetPublisherTrackByIdAsync(publisherId, trackId);

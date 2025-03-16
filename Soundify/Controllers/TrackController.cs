@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+using Domain.Interfaces;
 using Helpers;
 
 using Soundify.DAL.PostgreSQL.Models.db;
@@ -36,6 +37,19 @@ public class TrackController : Controller
             : await StatusCodes.Status404NotFound.ResultState("Track doesn't exist");
     }
 
+    [HttpPost("get-tracks-by-filter")]
+    public async Task<IActionResult> GetTracksByFilter(ITrackFilter filter)
+    {
+        var pagedTracksResult = await _trackManager.GetTracksAsync(filter);
+
+        if (pagedTracksResult.HasNextPage)
+            Response.Headers["X-Next-Page"] = $"{filter.Page + 1}";
+
+        return pagedTracksResult.Tracks is not null && pagedTracksResult.Tracks.Count > 0
+            ? await StatusCodes.Status200OK.ResultState("", pagedTracksResult.Tracks)
+            : await StatusCodes.Status404NotFound.ResultState("Track doesn't exist");
+    }
+    
     [HttpPost("create")]
     [Authorize(Policy = nameof(RolePolicy.RequireAnyAdminOrPublisher))]
     [ProducesResponseType(StatusCodes.Status200OK)]

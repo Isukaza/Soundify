@@ -31,6 +31,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Domain\Domain.csproj" />
       <ProjectReference Include="..\Helpers\Helpers.csproj" />
       <ProjectReference Include="..\Soundify.DAL.PostgreSQL\Soundify.DAL.PostgreSQL.csproj" />
     </ItemGroup>

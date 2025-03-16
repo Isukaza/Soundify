@@ -2,10 +2,17 @@ namespace Soundify.Models.Response;
 
 public class TrackResponse
 {
-    public Guid Id { get; set; }
-    public string Title { get; set; }
-    public string Genre { get; set; }
-    public string FilePath { get; set; }
+    public Guid TrackId { get; set; }
+    public string TrackName { get; set; }
+    
+    public Guid AlbumId { get; set; }
+    public string AlbumName { get; set; }
+    
+    public Guid ArtistId { get; set; }
+    public string ArtistName { get; set; }
+    
     public int Duration { get; set; }
-    public double Rating { get; set; }
+    public double TotalRating { get; set; }
+    public string FilePath { get; set; }
+    public string Genre { get; set; }
 }
