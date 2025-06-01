@@ -1,6 +1,8 @@
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 
+using Helpers;
+
 namespace Soundify.Configuration;
 
 public static class JwtConfig
@@ -15,17 +17,22 @@ public static class JwtConfig
 
     public static class Values
     {
-        public static readonly string Issuer;
-        public static readonly string Audience;
-        public static readonly SymmetricSecurityKey Key;
+        public static string Issuer { get; private set; }
+        public static string Audience { get; private set; }
+        public static SymmetricSecurityKey SymmetricSecurityKey { get; private set; }
 
-        static Values()
+        public static void Initialize(IConfiguration configuration, bool isDevelopment)
         {
-            var configuration = ConfigBase.GetConfiguration();
+            Issuer = DataHelper.GetRequiredString(configuration[Keys.IssuerKey], Keys.IssuerKey);
+            Audience = DataHelper.GetRequiredString(configuration[Keys.AudienceKey], Keys.AudienceKey);
+            
+            var rawJwtKey = isDevelopment
+                ? configuration[Keys.KeyKey]
+                : Environment.GetEnvironmentVariable("JWT_KEY");
 
-            Issuer = configuration[Keys.IssuerKey];
-            Audience = configuration[Keys.AudienceKey];
-            Key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration[Keys.KeyKey] ?? string.Empty));
+            var key = DataHelper.GetRequiredString(rawJwtKey, Keys.KeyKey, 32);
+
+            SymmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
         }
     }
 }

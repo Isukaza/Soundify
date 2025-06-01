@@ -1,35 +1,43 @@
-namespace Soundify.Configuration
+using Helpers;
+
+namespace Soundify.Configuration;
+
+public static class RabbitMqConfig
 {
-    public static class RabbitMqConfig
+    private static class Keys
     {
-        private static class Keys
-        {
-            private const string GroupName = "RabbitMQ";
-            public const string QueueNameKey = GroupName + ":QueueName";
-            public const string HostKey = GroupName + ":Host";
-            public const string PortKey = GroupName + ":Port";
-            public const string UserKey = GroupName + ":User";
-            public const string PasswordKey = GroupName + ":Password";
-        }
+        private const string GroupName = "RabbitMq";
+        public const string HostKey = GroupName + ":Host";
+        public const string QueueKey = GroupName + ":Queue";
+        public const string PortKey = GroupName + ":Port";
+        public const string UsernameKey = GroupName + ":Username";
+        public const string PasswordKey = GroupName + ":Password";
+    }
 
-        public static class Values
-        {
-            public static readonly string QueueName;
-            public static readonly string Host;
-            public static readonly int Port;
-            public static readonly string User;
-            public static readonly string Password;
+    public static class Values
+    {
+        public static string Host { get; private set; }
+        public static string Queue { get; private set; }
+        public static int Port { get; private set; }
+        public static string Username { get; private set; }
+        public static string Password { get; private set; }
 
-            static Values()
-            {
-                var configuration = ConfigBase.GetConfiguration();
-                
-                QueueName = configuration[Keys.QueueNameKey];
-                Host = configuration[Keys.HostKey];
-                Port = int.Parse(configuration[Keys.PortKey] ?? string.Empty);
-                User = configuration[Keys.UserKey];
-                Password = configuration[Keys.PasswordKey];
-            }
+        public static void Initialize(IConfiguration configuration, bool isDevelopment)
+        {
+            Host = DataHelper.GetRequiredString(configuration[Keys.HostKey], Keys.HostKey);
+            Queue = DataHelper.GetRequiredString(configuration[Keys.QueueKey], Keys.QueueKey);
+
+            Port = DataHelper.GetRequiredInt(configuration[Keys.PortKey], Keys.PortKey, 1, 65535);
+
+            var rawUsername = isDevelopment
+                ? configuration[Keys.UsernameKey]
+                : Environment.GetEnvironmentVariable("RABBITMQ_USER");
+            Username = DataHelper.GetRequiredString(rawUsername, Keys.UsernameKey, 3);
+
+            var rawPassword = isDevelopment
+                ? configuration[Keys.PasswordKey]
+                : Environment.GetEnvironmentVariable("RABBITMQ_PASS");
+            Password = DataHelper.GetRequiredString(rawPassword, Keys.PasswordKey, 32);
         }
     }
 }
