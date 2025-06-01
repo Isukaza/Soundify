@@ -9,6 +9,7 @@ using Soundify.DAL.PostgreSQL.Roles;
 using Soundify.Managers.Interfaces;
 using Soundify.Models;
 using Soundify.Models.Request.Create;
+using Soundify.Models.Request.Filtration;
 using Soundify.Models.Request.Update;
 
 namespace Soundify.Controllers;
@@ -38,9 +39,9 @@ public class TrackController : Controller
     }
 
     [HttpPost("get-tracks-by-filter")]
-    public async Task<IActionResult> GetTracksByFilter(ITrackFilter filter)
+    public async Task<IActionResult> GetTracksByFilter(TrackFilter filter)
     {
-        var pagedTracksResult = await _trackManager.GetTracksAsync(filter);
+        var pagedTracksResult = await _trackManager.GetTracksByFilterAsync(filter);
 
         if (pagedTracksResult.HasNextPage)
             Response.Headers["X-Next-Page"] = $"{filter.Page + 1}";
