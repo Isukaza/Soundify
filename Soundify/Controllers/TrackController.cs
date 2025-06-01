@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-using Domain.Interfaces;
 using Helpers;
 
 using Soundify.DAL.PostgreSQL.Models.db;
@@ -27,7 +26,7 @@ public class TrackController : Controller
         _trackManager = trackManager;
         _genreManager = genreManager;
     }
-    
+
     [HttpGet("{trackId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetTrack(Guid trackId)
@@ -50,7 +49,32 @@ public class TrackController : Controller
             ? await StatusCodes.Status200OK.ResultState("", pagedTracksResult.Tracks)
             : await StatusCodes.Status404NotFound.ResultState("Track doesn't exist");
     }
-    
+
+    [HttpPost("get-upload-token")]
+    [Authorize(Policy = nameof(RolePolicy.RequireAnyAdminOrPublisher))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetUploadToken([FromBody] Guid trackId)
+    {
+        var trackData = await _trackManager.GetTrackUploadTokenDataAsync(trackId);
+        if (trackData == null)
+            return await StatusCodes.Status404NotFound.ResultState("Track doesn't exist");
+
+        var userId = HttpContext.User.Claims.GetUserId();
+        var userRole = HttpContext.User.Claims.GetUserRole();
+        if (!userId.HasValue || !userRole.HasValue)
+            return await StatusCodes.Status401Unauthorized
+                .ResultState("Authorization failed due to an invalid or missing userId or role in the provided token");
+
+        if (userRole.Value == UserRole.Publisher && trackData.PublisherId != userId.Value)
+            return await StatusCodes.Status403Forbidden
+                .ResultState("You are not the publisher for this track");
+
+        var token = await _trackManager.GenerateUploadTokenAsync(userId.Value, trackId, trackData);
+        return await StatusCodes.Status200OK.ResultState("The upload token was successfully generated", token);
+    }
+
     [HttpPost("create")]
     [Authorize(Policy = nameof(RolePolicy.RequireAnyAdminOrPublisher))]
     [ProducesResponseType(StatusCodes.Status200OK)]

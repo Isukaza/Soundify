@@ -55,6 +55,7 @@ builder.Services.AddCors(options =>
 
 JwtConfig.Values.Initialize(builder.Configuration, builder.Environment.IsDevelopment());
 RabbitMqConfig.Values.Initialize(builder.Configuration, builder.Environment.IsDevelopment());
+UploadTokenConfig.Values.Initialize(builder.Configuration, builder.Environment.IsDevelopment());
 
 builder.Services.AddAuthorizationBuilder()
     .AddPolicy(nameof(RolePolicy.RequireAnyAdminOrPublisher), policy =>

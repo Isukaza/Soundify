@@ -1,9 +1,11 @@
 using System.Linq.Expressions;
+
 using Microsoft.EntityFrameworkCore;
 
 using Domain.Interfaces;
 
 using Soundify.DAL.PostgreSQL.Models.db;
+using Soundify.DAL.PostgreSQL.Models.DTO;
 using Soundify.DAL.PostgreSQL.Repository.Base;
 using Soundify.DAL.PostgreSQL.Repository.Interfaces.db;
 
@@ -38,6 +40,19 @@ public class TrackRepository : DbRepositoryBase<Track>, ITrackRepository
                                       && ((t.Album != null && t.Album.Artist.PublisherId == publisherId)
                                           || (t.Single != null && t.Single.Artist.PublisherId == publisherId)));
 
+    public async Task<TrackUploadTokenData?> GetTrackUploadTokenDataAsync(Guid trackId) =>
+        await DbContext.Tracks
+            .Where(t => t.Id == trackId)
+            .Select(t => new TrackUploadTokenData
+            {
+                ArtistId = t.Album != null ? t.Album.ArtistId : t.Single.ArtistId,
+                AlbumId = t.AlbumId,
+                PublisherId = t.Album != null
+                    ? t.Album.Artist.PublisherId
+                    : t.Single.Artist.PublisherId
+            })
+            .FirstOrDefaultAsync();
+
     #endregion
 
     #region Checks
@@ -53,9 +68,9 @@ public class TrackRepository : DbRepositoryBase<Track>, ITrackRepository
             .AnyAsync(t => t.Id == trackId && (t.Album != null || t.Single != null));
 
     #endregion
-    
+
     #region Helpers
-    
+
     private static List<Expression<Func<Track, bool>>> GetFilterExpressions(ITrackFilter filter)
     {
         var expressions = new List<Expression<Func<Track, bool>>>();

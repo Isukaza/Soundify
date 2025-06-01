@@ -1,6 +1,7 @@
 using Domain.Interfaces;
 
 using Soundify.DAL.PostgreSQL.Models.db;
+using Soundify.DAL.PostgreSQL.Models.DTO;
 using Soundify.Models;
 using Soundify.Models.Request.Create;
 using Soundify.Models.Request.Update;
@@ -10,14 +11,17 @@ namespace Soundify.Managers.Interfaces;
 public interface ITrackManager
 {
     Task<Track> GetTrackByIdAsync(Guid trackId);
-    Task<PagedTracksResult>GetTracksByFilterAsync(ITrackFilter filter);
+    Task<PagedTracksResult> GetTracksByFilterAsync(ITrackFilter filter);
 
     Task<Track> GetPublisherTrackByIdAsync(Guid publisherId, Guid trackId);
-    
+    Task<TrackUploadTokenData> GetTrackUploadTokenDataAsync(Guid trackId);
+
     Task<Track> CreateTrackAsync(TrackCreateRequest trackData, Genre genre);
     Task<bool> UpdateTrackAsync(Track track, TrackUpdateRequest updateRequest);
     Task<bool> DeleteTrackAsync(Track track);
 
     Task<bool> TrackExistsAsync(Guid trackId);
     Task<bool> IsTrackInAlbumOrSingleAsync(Guid trackId);
+
+    Task<string> GenerateUploadTokenAsync(Guid userId, Guid trackId, TrackUploadTokenData trackData);
 }

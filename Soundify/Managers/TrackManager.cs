@@ -1,10 +1,15 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography;
 using Microsoft.EntityFrameworkCore;
-
 using Domain.Interfaces;
-
+using Helpers;
+using Soundify.Configuration;
 using Soundify.DAL.PostgreSQL.Extensions;
 using Soundify.DAL.PostgreSQL.Models.db;
+using Soundify.DAL.PostgreSQL.Models.DTO;
 using Soundify.DAL.PostgreSQL.Repository.Interfaces.db;
+using Soundify.DAL.PostgreSQL.Roles;
 using Soundify.Managers.Interfaces;
 using Soundify.Models;
 using Soundify.Models.Request.Create;
@@ -64,6 +69,9 @@ public class TrackManager : ITrackManager
     public async Task<Track> GetPublisherTrackByIdAsync(Guid publisherId, Guid trackId) =>
         await _trackRepo.GetPublisherTrackByIdAsync(publisherId, trackId);
 
+    public Task<TrackUploadTokenData> GetTrackUploadTokenDataAsync(Guid trackId) =>
+        _trackRepo.GetTrackUploadTokenDataAsync(trackId);
+
     public async Task<Track> CreateTrackAsync(TrackCreateRequest trackData, Genre genre)
     {
         if (trackData is null)
@@ -104,4 +112,30 @@ public class TrackManager : ITrackManager
 
     public async Task<bool> IsTrackInAlbumOrSingleAsync(Guid trackId) =>
         await _trackRepo.IsTrackInAlbumOrSingleAsync(trackId);
+
+    public Task<string> GenerateUploadTokenAsync(Guid userId, Guid trackId, TrackUploadTokenData trackData)
+    {
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.NameIdentifier, userId.ToString()),
+            new("artistId", trackData.ArtistId.ToString()),
+            new("albumId", (trackData.AlbumId ?? Guid.Empty).ToString()),
+            new("trackId", trackId.ToString())
+        };
+
+        var jwt = new JwtSecurityToken(
+            issuer: JwtConfig.Values.Issuer,
+            audience: JwtConfig.Values.Audience,
+            claims: claims,
+            expires: DateTime.UtcNow.Add(UploadTokenConfig.Values.Expires),
+            signingCredentials: UploadTokenConfig.Values.JwtKey
+        );
+
+        var jwtHandler = new JwtSecurityTokenHandler();
+        var tokenString = jwtHandler.WriteToken(jwt);
+
+        var encryptedJwt = CryptoHelper.Aes256Encrypt(tokenString, UploadTokenConfig.Values.AesKey);
+
+        return Task.FromResult(encryptedJwt);
+    }
 }
