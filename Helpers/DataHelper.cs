@@ -25,7 +25,7 @@ public static class DataHelper
 
         return valueFromConfiguration;
     }
-    
+
     /// <summary>
     /// Validates and retrieves a required integer setting within a specified range.
     /// </summary>
@@ -50,5 +50,40 @@ public static class DataHelper
             throw new ArgumentException($"{settingName} is too high. The maximum value is {max}.");
 
         return result;
+    }
+
+    /// <summary>
+    /// Validates and converts a string configuration value to a TimeSpan, ensuring the value is within the specified bounds (in minutes).
+    /// The configuration value can be either a plain integer representing minutes or a valid TimeSpan string.
+    /// </summary>
+    /// <param name="valueFromConfiguration">The configuration value to validate, which can either be a string representing minutes or a TimeSpan string.</param>
+    /// <param name="settingName">A friendly name for the setting (used in exception messages).</param>
+    /// <param name="min">The minimum allowed value in minutes. The input value will be validated against this minimum.</param>
+    /// <param name="max">The maximum allowed value in minutes. The input value will be validated against this maximum.</param>
+    /// <returns>A TimeSpan representing the validated value, which is within the specified range in minutes.</returns>
+    /// <exception cref="ArgumentException">Thrown if the value is missing, invalid, or out of bounds (not within the specified range in minutes).</exception>
+    public static TimeSpan GetValidatedTimeSpan(string? valueFromConfiguration, string settingName, int min, int max)
+    {
+        if (string.IsNullOrWhiteSpace(valueFromConfiguration))
+            throw new ArgumentException($"{settingName} is missing");
+
+        if (int.TryParse(valueFromConfiguration, out var value))
+        {
+            if (value < min || value > max)
+                throw new ArgumentException($"{settingName} should be between {min} and {max} minutes");
+
+            return TimeSpan.FromMinutes(value);
+        }
+
+        if (TimeSpan.TryParse(valueFromConfiguration, out var timeSpan))
+        {
+            var minutes = (int)Math.Ceiling(timeSpan.TotalMinutes);
+            if (minutes < min || minutes > max)
+                throw new ArgumentException($"{settingName} should be between {min} and {max} minutes");
+
+            return timeSpan;
+        }
+
+        throw new ArgumentException($"{settingName} is invalid or missing");
     }
 }
