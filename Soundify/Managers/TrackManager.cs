@@ -25,12 +25,12 @@ public class TrackManager : ITrackManager
     public async Task<Track> GetTrackByIdAsync(Guid trackId) =>
         await _trackRepo.GetTrackByIdAsync(trackId);
 
-    public async Task<PagedTracksResult> GetTracksAsync(ITrackFilter filter)
+    public async Task<PagedTracksResult> GetTracksByFilterAsync(ITrackFilter filter)
     {
         var query = _trackRepo
             .GetFilteredTracks(filter)
             .OrderBy(t => t.Title)
-            .ApplyPagination(filter, out var hasNextPage)
+            .ApplyPagination(filter)
             .Select(track => new TrackResponse
             {
                 TrackId = track.Id,
@@ -44,9 +44,10 @@ public class TrackManager : ITrackManager
                 ArtistName = track.Album != null && track.Album.Artist != null ? track.Album.Artist.Name : string.Empty,
                 TotalRating = track.RatingCount > 0 ? track.TotalRating / track.RatingCount : 0
             });
-        
+
         var tracks = await query.ToListAsync();
 
+        var hasNextPage = tracks.Count > filter.Size;
         if (hasNextPage)
             tracks.RemoveAt(tracks.Count - 1);
 
