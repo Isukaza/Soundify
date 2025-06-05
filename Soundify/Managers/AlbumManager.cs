@@ -1,4 +1,5 @@
 using Soundify.DAL.PostgreSQL.Models.db;
+using Soundify.DAL.PostgreSQL.Models.DTO;
 using Soundify.DAL.PostgreSQL.Repository.Interfaces.db;
 using Soundify.Managers.Interfaces;
 using Soundify.Models.Request.Create;
@@ -17,6 +18,9 @@ public class AlbumManager : IAlbumManager
 
     public async Task<Album> GetAlbumByIdAsync(Guid albumId) =>
         await _albumRepo.GetAlbumByIdAsync(albumId);
+
+    public async Task<AlbumInfo> GetAlbumInfoByIdAsync(Guid albumId) =>
+        await _albumRepo.GetAlbumInfoByIdAsync(albumId);
 
     public async Task<Album> GetPublisherAlbumByIdAsync(Guid publisherId, Guid albumId) =>
         await _albumRepo.GetPublisherAlbumByIdAsync(publisherId, albumId);
