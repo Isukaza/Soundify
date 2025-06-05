@@ -30,9 +30,9 @@ public class AlbumController : Controller
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAlbum(Guid albumId)
     {
-        var album = await _albumManager.GetAlbumByIdAsync(albumId);
+        var album = await _albumManager.GetAlbumInfoByIdAsync(albumId);
         return album != null
-            ? await StatusCodes.Status200OK.ResultState("", album.ToAlbumResponse())
+            ? await StatusCodes.Status200OK.ResultState("", album)
             : await StatusCodes.Status404NotFound.ResultState("Album doesn't exist");
     }
 
