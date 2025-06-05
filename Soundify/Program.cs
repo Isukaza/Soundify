@@ -47,7 +47,8 @@ builder.Services.AddCors(options =>
         {
             policyBuilder.AllowAnyOrigin()
                 .AllowAnyHeader()
-                .AllowAnyMethod();
+                .AllowAnyMethod()
+                .WithExposedHeaders("x-next-page");
         });
 });
 
