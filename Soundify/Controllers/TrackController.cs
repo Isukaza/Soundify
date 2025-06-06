@@ -92,7 +92,7 @@ public class TrackController : Controller
 
     [HttpPost("update")]
     [Authorize(Policy = nameof(RolePolicy.RequireAnyAdminOrPublisher))]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
     public async Task<IActionResult> UpdateTrack(TrackUpdateRequest trackUpdateRequest)
     {
         var userRole = HttpContext.User.Claims.GetUserRole();

@@ -98,6 +98,9 @@ public class TrackManager : ITrackManager
         if (!string.IsNullOrEmpty(trackData.Title))
             track.Title = trackData.Title;
 
+        if (trackData.Duration > 0)
+            track.Duration = trackData.Duration;
+
         if (trackData.ReleaseDate is not null)
             track.ReleaseDate = trackData.ReleaseDate.Value;
 
