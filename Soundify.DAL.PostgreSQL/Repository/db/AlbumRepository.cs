@@ -10,15 +10,8 @@ using Soundify.DAL.PostgreSQL.Repository.Interfaces.db;
 
 namespace Soundify.DAL.PostgreSQL.Repository.db;
 
-public class AlbumRepository : DbRepositoryBase<Album>, IAlbumRepository
+public class AlbumRepository(SoundifyDbContext dbContext) : DbRepositoryBase<Album>(dbContext), IAlbumRepository
 {
-    #region C-tor
-
-    public AlbumRepository(SoundifyDbContext dbContext) : base(dbContext)
-    { }
-
-    #endregion
-
     #region Get
 
     public async Task<Album> GetAlbumByIdAsync(Guid albumId) =>

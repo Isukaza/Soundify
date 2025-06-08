@@ -13,21 +13,14 @@ using Soundify.Models.Response;
 
 namespace Soundify.Managers;
 
-public class AlbumManager : IAlbumManager
+public class AlbumManager(IAlbumRepository albumRepo) : IAlbumManager
 {
-    private readonly IAlbumRepository _albumRepo;
-
-    public AlbumManager(IAlbumRepository albumRepo)
-    {
-        _albumRepo = albumRepo;
-    }
-
     public async Task<Album> GetAlbumByIdAsync(Guid albumId) =>
-        await _albumRepo.GetAlbumByIdAsync(albumId);
+        await albumRepo.GetAlbumByIdAsync(albumId);
 
     public async Task<PagedAlbumsResult> GetAlbumsByFilterAsync(IFilter filter)
     {
-        var query = _albumRepo
+        var query = albumRepo
             .GetFilteredAlbums(filter)
             .OrderBy(a => a.Title)
             .ApplyPagination(filter)
@@ -54,7 +47,7 @@ public class AlbumManager : IAlbumManager
     }
 
     public async Task<AlbumResponse> GetAlbumInfoByIdAsync(Guid albumId) =>
-        await _albumRepo
+        await albumRepo
             .GetAlbumInfoById(albumId)
             .Select(album => new AlbumResponse
             {
@@ -68,7 +61,7 @@ public class AlbumManager : IAlbumManager
             .FirstOrDefaultAsync();
 
     public async Task<Album> GetPublisherAlbumByIdAsync(Guid publisherId, Guid albumId) =>
-        await _albumRepo.GetPublisherAlbumByIdAsync(publisherId, albumId);
+        await albumRepo.GetPublisherAlbumByIdAsync(publisherId, albumId);
 
     public async Task<Album> CreateAlbumAsync(AlbumCreateRequest albumData)
     {
@@ -83,7 +76,7 @@ public class AlbumManager : IAlbumManager
             CoverFilePath = string.Empty,
         };
 
-        return await _albumRepo.CreateAsync(album);
+        return await albumRepo.CreateAsync(album);
     }
 
     public async Task<bool> UpdateAlbumAsync(Album album, AlbumUpdateRequest albumData)
@@ -100,9 +93,9 @@ public class AlbumManager : IAlbumManager
         if (!string.IsNullOrEmpty(albumData.CoverFilePath))
             album.CoverFilePath = albumData.CoverFilePath.Trim();
 
-        return await _albumRepo.UpdateAsync(album);
+        return await albumRepo.UpdateAsync(album);
     }
 
     public async Task<bool> DeleteAlbumAsync(Album album) =>
-        album is not null && await _albumRepo.DeleteAsync(album);
+        album is not null && await albumRepo.DeleteAsync(album);
 }
