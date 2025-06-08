@@ -18,11 +18,13 @@ namespace Soundify.Controllers;
 [Authorize]
 public class TrackController : Controller
 {
+    private readonly IAlbumManager _albumManager;
     private readonly ITrackManager _trackManager;
     private readonly IGenreManager _genreManager;
 
-    public TrackController(ITrackManager trackManager, IGenreManager genreManager)
+    public TrackController(IAlbumManager albumManager, ITrackManager trackManager, IGenreManager genreManager)
     {
+        _albumManager = albumManager;
         _trackManager = trackManager;
         _genreManager = genreManager;
     }
@@ -77,16 +79,37 @@ public class TrackController : Controller
 
     [HttpPost("create")]
     [Authorize(Policy = nameof(RolePolicy.RequireAnyAdminOrPublisher))]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
     public async Task<IActionResult> CreateTrack(TrackCreateRequest trackCreateRequest)
     {
+        var userRole = HttpContext.User.Claims.GetUserRole();
+        Album album;
+        if (userRole.HasValue && userRole.Value == UserRole.Publisher)
+        {
+            var publisherId = HttpContext.User.Claims.GetUserId();
+            if (!publisherId.HasValue)
+                return await StatusCodes.Status401Unauthorized
+                    .ResultState("Authorization failed due to an invalid or missing userId in the provided token");
+
+            album = await _albumManager.GetPublisherAlbumByIdAsync(publisherId.Value, trackCreateRequest.AlbumId);
+            if (album is null)
+                return await StatusCodes.Status403Forbidden
+                    .ResultState("You are not a publisher for this track");
+        }
+        else
+        {
+            album = await _albumManager.GetAlbumByIdAsync(trackCreateRequest.AlbumId);
+            if (album is null)
+                return await StatusCodes.Status404NotFound.ResultState("Track doesn't exist");
+        }
+        
         var genre = await _genreManager.GetGenreByIdAsync(trackCreateRequest.GenreId);
         if (genre is null)
             return await StatusCodes.Status404NotFound.ResultState("Genre doesn't exist");
 
         var track = await _trackManager.CreateTrackAsync(trackCreateRequest, genre);
         return track is not null
-            ? await StatusCodes.Status201Created.ResultState("", track.ToTrackResponse())
+            ? await StatusCodes.Status201Created.ResultState("", track.Id)
             : await StatusCodes.Status500InternalServerError.ResultState();
     }
 

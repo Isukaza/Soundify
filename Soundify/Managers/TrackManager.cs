@@ -79,11 +79,12 @@ public class TrackManager : ITrackManager
 
         var track = new Track
         {
+            AlbumId = trackData.AlbumId,
+            GenreId = trackData.GenreId,
             Title = trackData.Title,
             Duration = 0,
             ReleaseDate = trackData.ReleaseDate,
             FilePath = string.Empty,
-            GenreId = trackData.GenreId,
             Genre = genre
         };
 
