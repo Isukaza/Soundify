@@ -14,7 +14,7 @@ using Soundify.Models.Request.Update;
 namespace Soundify.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("/[controller]")]
 [Authorize]
 public class TrackController(IAlbumManager albumManager, ITrackManager trackManager, IGenreManager genreManager)
     : Controller
@@ -30,12 +30,11 @@ public class TrackController(IAlbumManager albumManager, ITrackManager trackMana
     }
 
     [HttpPost("get-tracks-by-filter")]
-    public async Task<IActionResult> GetTracksByFilter(TrackFilter filter)
+    public async Task<IActionResult> GetTracksByFilter(TrackFilter trackFilter)
     {
-        var pagedTracksResult = await trackManager.GetTracksByFilterAsync(filter);
-
+        var pagedTracksResult = await trackManager.GetTracksByFilterAsync(trackFilter);
         if (pagedTracksResult.HasNextPage)
-            Response.Headers["X-Next-Page"] = $"{filter.Page + 1}";
+            Response.Headers["X-Next-Page"] = $"{trackFilter.Page + 1}";
 
         return pagedTracksResult.Tracks is not null && pagedTracksResult.Tracks.Count > 0
             ? await StatusCodes.Status200OK.ResultState("", pagedTracksResult.Tracks)

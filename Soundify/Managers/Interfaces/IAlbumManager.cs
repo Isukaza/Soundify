@@ -1,14 +1,17 @@
+using Domain.Interfaces;
 using Soundify.DAL.PostgreSQL.Models.db;
-using Soundify.DAL.PostgreSQL.Models.DTO;
+using Soundify.Models;
 using Soundify.Models.Request.Create;
 using Soundify.Models.Request.Update;
+using Soundify.Models.Response;
 
 namespace Soundify.Managers.Interfaces;
 
 public interface IAlbumManager
 {
     Task<Album> GetAlbumByIdAsync(Guid albumId);
-    Task<AlbumInfo> GetAlbumInfoByIdAsync(Guid albumId);
+    Task<PagedAlbumsResult> GetAlbumsByFilterAsync(IFilter filter);
+    Task<AlbumResponse> GetAlbumInfoByIdAsync(Guid albumId);
     Task<Album> GetPublisherAlbumByIdAsync(Guid publisherId, Guid albumId);
 
     Task<Album> CreateAlbumAsync(AlbumCreateRequest albumData);

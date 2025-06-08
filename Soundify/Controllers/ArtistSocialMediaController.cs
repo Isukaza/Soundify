@@ -13,7 +13,7 @@ using Soundify.Models.Request.Update;
 namespace Soundify.Controllers;
 
 [ApiController]
-[Route("api/artist-social-media")]
+[Route("/artist-social-media")]
 [Authorize]
 public class ArtistSocialMediaController : Controller
 {

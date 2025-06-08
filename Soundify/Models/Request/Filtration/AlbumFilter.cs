@@ -4,12 +4,12 @@ using Domain.Interfaces;
 
 namespace Soundify.Models.Request.Filtration;
 
-public class TrackFilter : IFilter
+public class AlbumFilter : IFilter
 {
     public Guid? TrackId { get; init; }
 
-    [MinLength(3, ErrorMessage = "The Name must be at least 3 characters long.")]
-    [MaxLength(100, ErrorMessage = "The Name must be at most 100 characters long.")]
+    [MinLength(3, ErrorMessage = "The Track Name must be at least 3 characters long.")]
+    [MaxLength(100, ErrorMessage = "The Track Name must be at most 100 characters long.")]
     public string? TrackName { get; init; }
 
     public Guid? AlbumId { get; init; }

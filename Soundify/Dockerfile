@@ -4,7 +4,9 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
+COPY ["../Domain/Domain.csproj", "Domain/"]
 COPY ["../Helpers/Helpers.csproj", "Helpers/"]
+COPY ["../RabbitMQ.Messaging/RabbitMQ.Messaging.csproj", "RabbitMQ.Messaging/"]
 COPY ["../Soundify.DAL.PostgreSQL/Soundify.DAL.PostgreSQL.csproj", "Soundify.DAL.PostgreSQL/"]
 COPY ["Soundify/Soundify.csproj", "Soundify/"]
 
