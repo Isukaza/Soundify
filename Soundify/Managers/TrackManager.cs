@@ -18,21 +18,14 @@ using Soundify.Models.Response;
 
 namespace Soundify.Managers;
 
-public class TrackManager : ITrackManager
+public class TrackManager(ITrackRepository trackRepo) : ITrackManager
 {
-    private readonly ITrackRepository _trackRepo;
-
-    public TrackManager(ITrackRepository trackRepo)
-    {
-        _trackRepo = trackRepo;
-    }
-
     public async Task<Track> GetTrackByIdAsync(Guid trackId) =>
-        await _trackRepo.GetTrackByIdAsync(trackId);
+        await trackRepo.GetTrackByIdAsync(trackId);
 
     public async Task<PagedTracksResult> GetTracksByFilterAsync(ITrackFilter filter)
     {
-        var query = _trackRepo
+        var query = trackRepo
             .GetFilteredTracks(filter)
             .OrderBy(t => t.Title)
             .ApplyPagination(filter)
@@ -67,10 +60,10 @@ public class TrackManager : ITrackManager
     }
 
     public async Task<Track> GetPublisherTrackByIdAsync(Guid publisherId, Guid trackId) =>
-        await _trackRepo.GetPublisherTrackByIdAsync(publisherId, trackId);
+        await trackRepo.GetPublisherTrackByIdAsync(publisherId, trackId);
 
     public Task<TrackUploadTokenData> GetTrackUploadTokenDataAsync(Guid trackId) =>
-        _trackRepo.GetTrackUploadTokenDataAsync(trackId);
+        trackRepo.GetTrackUploadTokenDataAsync(trackId);
 
     public async Task<Track> CreateTrackAsync(TrackCreateRequest trackData, Genre genre)
     {
@@ -88,7 +81,7 @@ public class TrackManager : ITrackManager
             Genre = genre
         };
 
-        return await _trackRepo.CreateAsync(track);
+        return await trackRepo.CreateAsync(track);
     }
 
     public async Task<bool> UpdateTrackAsync(Track track, TrackUpdateRequest trackData)
@@ -105,17 +98,17 @@ public class TrackManager : ITrackManager
         if (trackData.ReleaseDate is not null)
             track.ReleaseDate = trackData.ReleaseDate.Value;
 
-        return await _trackRepo.UpdateAsync(track);
+        return await trackRepo.UpdateAsync(track);
     }
 
     public async Task<bool> DeleteTrackAsync(Track track) =>
-        track is not null && await _trackRepo.DeleteAsync(track);
+        track is not null && await trackRepo.DeleteAsync(track);
 
     public async Task<bool> TrackExistsAsync(Guid trackId) =>
-        await _trackRepo.TrackExistsAsync(trackId);
+        await trackRepo.TrackExistsAsync(trackId);
 
     public async Task<bool> IsTrackInAlbumOrSingleAsync(Guid trackId) =>
-        await _trackRepo.IsTrackInAlbumOrSingleAsync(trackId);
+        await trackRepo.IsTrackInAlbumOrSingleAsync(trackId);
 
     public Task<string> GenerateUploadTokenAsync(Guid userId, Guid trackId, TrackUploadTokenData trackData)
     {

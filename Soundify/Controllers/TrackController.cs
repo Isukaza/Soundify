@@ -16,24 +16,14 @@ namespace Soundify.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class TrackController : Controller
+public class TrackController(IAlbumManager albumManager, ITrackManager trackManager, IGenreManager genreManager)
+    : Controller
 {
-    private readonly IAlbumManager _albumManager;
-    private readonly ITrackManager _trackManager;
-    private readonly IGenreManager _genreManager;
-
-    public TrackController(IAlbumManager albumManager, ITrackManager trackManager, IGenreManager genreManager)
-    {
-        _albumManager = albumManager;
-        _trackManager = trackManager;
-        _genreManager = genreManager;
-    }
-
     [HttpGet("{trackId:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetTrack(Guid trackId)
     {
-        var track = await _trackManager.GetTrackByIdAsync(trackId);
+        var track = await trackManager.GetTrackByIdAsync(trackId);
         return track is not null
             ? await StatusCodes.Status200OK.ResultState("", track.ToTrackResponse())
             : await StatusCodes.Status404NotFound.ResultState("Track doesn't exist");
@@ -42,7 +32,7 @@ public class TrackController : Controller
     [HttpPost("get-tracks-by-filter")]
     public async Task<IActionResult> GetTracksByFilter(TrackFilter filter)
     {
-        var pagedTracksResult = await _trackManager.GetTracksByFilterAsync(filter);
+        var pagedTracksResult = await trackManager.GetTracksByFilterAsync(filter);
 
         if (pagedTracksResult.HasNextPage)
             Response.Headers["X-Next-Page"] = $"{filter.Page + 1}";
@@ -59,7 +49,7 @@ public class TrackController : Controller
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetUploadToken([FromBody] Guid trackId)
     {
-        var trackData = await _trackManager.GetTrackUploadTokenDataAsync(trackId);
+        var trackData = await trackManager.GetTrackUploadTokenDataAsync(trackId);
         if (trackData == null)
             return await StatusCodes.Status404NotFound.ResultState("Track doesn't exist");
 
@@ -73,7 +63,7 @@ public class TrackController : Controller
             return await StatusCodes.Status403Forbidden
                 .ResultState("You are not the publisher for this track");
 
-        var token = await _trackManager.GenerateUploadTokenAsync(userId.Value, trackId, trackData);
+        var token = await trackManager.GenerateUploadTokenAsync(userId.Value, trackId, trackData);
         return await StatusCodes.Status200OK.ResultState("The upload token was successfully generated", token);
     }
 
@@ -91,23 +81,23 @@ public class TrackController : Controller
                 return await StatusCodes.Status401Unauthorized
                     .ResultState("Authorization failed due to an invalid or missing userId in the provided token");
 
-            album = await _albumManager.GetPublisherAlbumByIdAsync(publisherId.Value, trackCreateRequest.AlbumId);
+            album = await albumManager.GetPublisherAlbumByIdAsync(publisherId.Value, trackCreateRequest.AlbumId);
             if (album is null)
                 return await StatusCodes.Status403Forbidden
                     .ResultState("You are not a publisher for this track");
         }
         else
         {
-            album = await _albumManager.GetAlbumByIdAsync(trackCreateRequest.AlbumId);
+            album = await albumManager.GetAlbumByIdAsync(trackCreateRequest.AlbumId);
             if (album is null)
                 return await StatusCodes.Status404NotFound.ResultState("Track doesn't exist");
         }
-        
-        var genre = await _genreManager.GetGenreByIdAsync(trackCreateRequest.GenreId);
+
+        var genre = await genreManager.GetGenreByIdAsync(trackCreateRequest.GenreId);
         if (genre is null)
             return await StatusCodes.Status404NotFound.ResultState("Genre doesn't exist");
 
-        var track = await _trackManager.CreateTrackAsync(trackCreateRequest, genre);
+        var track = await trackManager.CreateTrackAsync(trackCreateRequest, genre);
         return track is not null
             ? await StatusCodes.Status201Created.ResultState("", track.Id)
             : await StatusCodes.Status500InternalServerError.ResultState();
@@ -127,21 +117,21 @@ public class TrackController : Controller
                 return await StatusCodes.Status401Unauthorized
                     .ResultState("Authorization failed due to an invalid or missing userId in the provided token");
 
-            track = await _trackManager.IsTrackInAlbumOrSingleAsync(trackUpdateRequest.Id)
-                ? await _trackManager.GetPublisherTrackByIdAsync(publisherId.Value, trackUpdateRequest.Id)
-                : await _trackManager.GetTrackByIdAsync(trackUpdateRequest.Id);
+            track = await trackManager.IsTrackInAlbumOrSingleAsync(trackUpdateRequest.Id)
+                ? await trackManager.GetPublisherTrackByIdAsync(publisherId.Value, trackUpdateRequest.Id)
+                : await trackManager.GetTrackByIdAsync(trackUpdateRequest.Id);
             if (track is null)
                 return await StatusCodes.Status403Forbidden
                     .ResultState("You are not a publisher for this track");
         }
         else
         {
-            track = await _trackManager.GetTrackByIdAsync(trackUpdateRequest.Id);
+            track = await trackManager.GetTrackByIdAsync(trackUpdateRequest.Id);
             if (track is null)
                 return await StatusCodes.Status404NotFound.ResultState("Track doesn't exist");
         }
 
-        return await _trackManager.UpdateTrackAsync(track, trackUpdateRequest)
+        return await trackManager.UpdateTrackAsync(track, trackUpdateRequest)
             ? await StatusCodes.Status200OK.ResultState("", track.ToTrackResponse())
             : await StatusCodes.Status500InternalServerError.ResultState();
     }
@@ -160,21 +150,21 @@ public class TrackController : Controller
                 return await StatusCodes.Status401Unauthorized
                     .ResultState("Authorization failed due to an invalid or missing userId in the provided token");
 
-            track = await _trackManager.IsTrackInAlbumOrSingleAsync(trackId)
-                ? await _trackManager.GetPublisherTrackByIdAsync(publisherId.Value, trackId)
-                : await _trackManager.GetTrackByIdAsync(trackId);
+            track = await trackManager.IsTrackInAlbumOrSingleAsync(trackId)
+                ? await trackManager.GetPublisherTrackByIdAsync(publisherId.Value, trackId)
+                : await trackManager.GetTrackByIdAsync(trackId);
             if (track is null)
                 return await StatusCodes.Status403Forbidden
                     .ResultState("You are not a publisher for this track");
         }
         else
         {
-            track = await _trackManager.GetTrackByIdAsync(trackId);
+            track = await trackManager.GetTrackByIdAsync(trackId);
             if (track is null)
                 return await StatusCodes.Status404NotFound.ResultState("Track doesn't exist");
         }
 
-        return await _trackManager.DeleteTrackAsync(track)
+        return await trackManager.DeleteTrackAsync(track)
             ? await StatusCodes.Status200OK.ResultState("Delete successful")
             : await StatusCodes.Status500InternalServerError.ResultState();
     }

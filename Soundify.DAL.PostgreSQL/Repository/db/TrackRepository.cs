@@ -11,15 +11,8 @@ using Soundify.DAL.PostgreSQL.Repository.Interfaces.db;
 
 namespace Soundify.DAL.PostgreSQL.Repository.db;
 
-public class TrackRepository : DbRepositoryBase<Track>, ITrackRepository
+public class TrackRepository(SoundifyDbContext dbContext) : DbRepositoryBase<Track>(dbContext), ITrackRepository
 {
-    #region C-tor
-
-    public TrackRepository(SoundifyDbContext dbContext) : base(dbContext)
-    { }
-
-    #endregion
-
     #region Get
 
     public IQueryable<Track> GetFilteredTracks(ITrackFilter filter)
