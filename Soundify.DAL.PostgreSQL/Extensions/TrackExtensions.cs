@@ -5,6 +5,6 @@ namespace Soundify.DAL.PostgreSQL.Extensions;
 
 public static class TrackExtensions
 {
-    public static IQueryable<Track> ApplyPagination(this IQueryable<Track> query, ITrackFilter filter) =>
+    public static IQueryable<Track> ApplyPagination(this IQueryable<Track> query, IFilter filter) =>
         query.Skip((filter.Page - 1) * filter.Size).Take(filter.Size + 1);
 }

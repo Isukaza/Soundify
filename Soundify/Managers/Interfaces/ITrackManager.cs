@@ -10,7 +10,7 @@ namespace Soundify.Managers.Interfaces;
 public interface ITrackManager
 {
     Task<Track> GetTrackByIdAsync(Guid trackId);
-    Task<PagedTracksResult> GetTracksByFilterAsync(ITrackFilter filter);
+    Task<PagedTracksResult> GetTracksByFilterAsync(IFilter filter);
 
     Task<Track> GetPublisherTrackByIdAsync(Guid publisherId, Guid trackId);
     Task<TrackUploadTokenData> GetTrackUploadTokenDataAsync(Guid trackId);

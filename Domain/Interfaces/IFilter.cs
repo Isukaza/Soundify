@@ -1,6 +1,6 @@
 namespace Domain.Interfaces;
 
-public interface ITrackFilter : IPagination
+public interface IFilter : IPagination
 {
     public Guid? TrackId { get; init; }
 

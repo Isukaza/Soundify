@@ -30,10 +30,9 @@ public class TrackController(IAlbumManager albumManager, ITrackManager trackMana
     }
 
     [HttpPost("get-tracks-by-filter")]
-    public async Task<IActionResult> GetTracksByFilter(TrackFilter filter)
+    public async Task<IActionResult> GetTracksByFilter(Filter filter)
     {
         var pagedTracksResult = await trackManager.GetTracksByFilterAsync(filter);
-
         if (pagedTracksResult.HasNextPage)
             Response.Headers["X-Next-Page"] = $"{filter.Page + 1}";
 

@@ -8,7 +8,7 @@ namespace Soundify.DAL.PostgreSQL.Repository.Interfaces.db;
 
 public interface ITrackRepository : IDbRepositoryBase<Track>
 {
-    IQueryable<Track> GetFilteredTracks(ITrackFilter filter);
+    IQueryable<Track> GetFilteredTracks(IFilter filter);
 
     Task<Track> GetTrackByIdAsync(Guid trackId);
     Task<Track> GetPublisherTrackByIdAsync(Guid publisherId, Guid trackId);

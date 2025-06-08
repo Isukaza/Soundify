@@ -4,7 +4,7 @@ using Domain.Interfaces;
 
 namespace Soundify.Models.Request.Filtration;
 
-public class TrackFilter : ITrackFilter
+public class Filter : IFilter
 {
     public Guid? TrackId { get; init; }
 

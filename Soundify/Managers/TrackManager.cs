@@ -23,7 +23,7 @@ public class TrackManager(ITrackRepository trackRepo) : ITrackManager
     public async Task<Track> GetTrackByIdAsync(Guid trackId) =>
         await trackRepo.GetTrackByIdAsync(trackId);
 
-    public async Task<PagedTracksResult> GetTracksByFilterAsync(ITrackFilter filter)
+    public async Task<PagedTracksResult> GetTracksByFilterAsync(IFilter filter)
     {
         var query = trackRepo
             .GetFilteredTracks(filter)

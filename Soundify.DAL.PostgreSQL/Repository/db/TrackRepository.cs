@@ -15,7 +15,7 @@ public class TrackRepository(SoundifyDbContext dbContext) : DbRepositoryBase<Tra
 {
     #region Get
 
-    public IQueryable<Track> GetFilteredTracks(ITrackFilter filter)
+    public IQueryable<Track> GetFilteredTracks(IFilter filter)
     {
         var query = DbContext.Tracks.AsNoTracking().AsQueryable();
         var filters = GetFilterExpressions(filter);
@@ -64,7 +64,7 @@ public class TrackRepository(SoundifyDbContext dbContext) : DbRepositoryBase<Tra
 
     #region Helpers
 
-    private static List<Expression<Func<Track, bool>>> GetFilterExpressions(ITrackFilter filter)
+    private static List<Expression<Func<Track, bool>>> GetFilterExpressions(IFilter filter)
     {
         var expressions = new List<Expression<Func<Track, bool>>>();
 
