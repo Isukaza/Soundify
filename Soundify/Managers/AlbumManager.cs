@@ -53,8 +53,19 @@ public class AlbumManager : IAlbumManager
         };
     }
 
-    public async Task<AlbumInfo> GetAlbumInfoByIdAsync(Guid albumId) =>
-        await _albumRepo.GetAlbumInfoByIdAsync(albumId);
+    public async Task<AlbumResponse> GetAlbumInfoByIdAsync(Guid albumId) =>
+        await _albumRepo
+            .GetAlbumInfoById(albumId)
+            .Select(album => new AlbumResponse
+            {
+                Id = album.Id,
+                ArtistId = album.Artist.Id,
+                ArtistName = album.Artist.Name,
+                Title = album.Title,
+                ReleaseDate = album.ReleaseDate,
+                CoverFilePath = album.CoverFilePath
+            })
+            .FirstOrDefaultAsync();
 
     public async Task<Album> GetPublisherAlbumByIdAsync(Guid publisherId, Guid albumId) =>
         await _albumRepo.GetPublisherAlbumByIdAsync(publisherId, albumId);

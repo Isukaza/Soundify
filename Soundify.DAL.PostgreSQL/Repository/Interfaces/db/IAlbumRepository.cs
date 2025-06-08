@@ -9,6 +9,6 @@ public interface IAlbumRepository : IDbRepositoryBase<Album>
 {
     Task<Album> GetAlbumByIdAsync(Guid albumId);
     IQueryable<Album> GetFilteredAlbums(IFilter filter);
-    Task<AlbumInfo> GetAlbumInfoByIdAsync(Guid albumId);
+    IQueryable<Album> GetAlbumInfoById(Guid albumId);
     Task<Album> GetPublisherAlbumByIdAsync(Guid publisherId, Guid albumId);
 }

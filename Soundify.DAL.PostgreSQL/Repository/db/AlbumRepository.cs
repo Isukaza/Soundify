@@ -31,25 +31,10 @@ public class AlbumRepository : DbRepositoryBase<Album>, IAlbumRepository
         return filters.Aggregate(query, (current, condition) => current.Where(condition));
     }
 
-    public async Task<AlbumInfo> GetAlbumInfoByIdAsync(Guid albumId)
-    {
-        var album = await DbContext.Albums
+    public IQueryable<Album> GetAlbumInfoById(Guid albumId) =>
+        DbContext.Albums
             .Include(a => a.Artist)
-            .FirstOrDefaultAsync(a => a.Id == albumId);
-
-        if (album == null)
-            return null;
-
-        return new AlbumInfo
-        {
-            Id = album.Id,
-            ArtistId = album.ArtistId,
-            ArtistName = album.Artist?.Name,
-            Title = album.Title,
-            ReleaseDate = album.ReleaseDate,
-            CoverFilePath = album.CoverFilePath
-        };
-    }
+            .Where(a => a.Id == albumId);
 
     public async Task<Album> GetPublisherAlbumByIdAsync(Guid publisherId, Guid albumId) =>
         await DbContext.Albums.FirstOrDefaultAsync(a => a.Id == albumId && a.Artist.PublisherId == publisherId);
