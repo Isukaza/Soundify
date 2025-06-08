@@ -8,6 +8,7 @@ using Soundify.DAL.PostgreSQL.Roles;
 using Soundify.Managers.Interfaces;
 using Soundify.Models;
 using Soundify.Models.Request.Create;
+using Soundify.Models.Request.Filtration;
 using Soundify.Models.Request.Update;
 
 namespace Soundify.Controllers;
@@ -33,6 +34,18 @@ public class AlbumController : Controller
         var album = await _albumManager.GetAlbumInfoByIdAsync(albumId);
         return album != null
             ? await StatusCodes.Status200OK.ResultState("", album)
+            : await StatusCodes.Status404NotFound.ResultState("Album doesn't exist");
+    }
+    
+    [HttpPost("get-albums-by-filter")]
+    public async Task<IActionResult> GetAlbumsByFilter(AlbumFilter filter)
+    {
+        var pagedAlbumsResult = await _albumManager.GetAlbumsByFilterAsync(filter);
+        if (pagedAlbumsResult.HasNextPage)
+            Response.Headers["X-Next-Page"] = $"{filter.Page + 1}";
+
+        return pagedAlbumsResult.Albums is not null && pagedAlbumsResult.Albums.Count > 0
+            ? await StatusCodes.Status200OK.ResultState("", pagedAlbumsResult.Albums)
             : await StatusCodes.Status404NotFound.ResultState("Album doesn't exist");
     }
 

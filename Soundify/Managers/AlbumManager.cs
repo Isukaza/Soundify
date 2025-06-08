@@ -1,9 +1,15 @@
+using Microsoft.EntityFrameworkCore;
+
+using Domain.Interfaces;
+using Soundify.DAL.PostgreSQL.Extensions;
 using Soundify.DAL.PostgreSQL.Models.db;
 using Soundify.DAL.PostgreSQL.Models.DTO;
 using Soundify.DAL.PostgreSQL.Repository.Interfaces.db;
 using Soundify.Managers.Interfaces;
+using Soundify.Models;
 using Soundify.Models.Request.Create;
 using Soundify.Models.Request.Update;
+using Soundify.Models.Response;
 
 namespace Soundify.Managers;
 
@@ -18,6 +24,34 @@ public class AlbumManager : IAlbumManager
 
     public async Task<Album> GetAlbumByIdAsync(Guid albumId) =>
         await _albumRepo.GetAlbumByIdAsync(albumId);
+
+    public async Task<PagedAlbumsResult> GetAlbumsByFilterAsync(IFilter filter)
+    {
+        var query = _albumRepo
+            .GetFilteredAlbums(filter)
+            .OrderBy(a => a.Title)
+            .ApplyPagination(filter)
+            .Select(album => new AlbumResponse
+            {
+                Id = album.Id,
+                ArtistId = album.Artist.Id,
+                ArtistName = album.Artist.Name,
+                Title = album.Title,
+                ReleaseDate = album.ReleaseDate,
+                CoverFilePath = album.CoverFilePath
+            });
+
+        var albums = await query.ToListAsync();
+        var hasNextPage = albums.Count > filter.Size;
+        if (hasNextPage)
+            albums.RemoveAt(albums.Count - 1);
+
+        return new PagedAlbumsResult
+        {
+            Albums = albums,
+            HasNextPage = hasNextPage
+        };
+    }
 
     public async Task<AlbumInfo> GetAlbumInfoByIdAsync(Guid albumId) =>
         await _albumRepo.GetAlbumInfoByIdAsync(albumId);
