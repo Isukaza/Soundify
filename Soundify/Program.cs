@@ -38,21 +38,25 @@ builder.Services.AddHttpLogging(logging =>
     logging.CombineLogs = true;
 });
 
-#if DEBUG
-
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowSpecificOrigin",
-        policyBuilder =>
+    options.AddPolicy("AllowSpecificOrigin", policyBuilder =>
+    {
+        if (builder.Environment.IsDevelopment())
         {
-            policyBuilder.AllowAnyOrigin()
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-                .WithExposedHeaders("x-next-page");
-        });
-});
+            policyBuilder.AllowAnyOrigin();
+        }
+        else
+        {
+            policyBuilder.WithOrigins("https://skillforge.click");
+        }
 
-#endif
+        policyBuilder
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .WithExposedHeaders("x-next-page");
+    });
+});
 
 JwtConfig.Values.Initialize(builder.Configuration, builder.Environment.IsDevelopment());
 RabbitMqConfig.Values.Initialize(builder.Configuration, builder.Environment.IsDevelopment());
@@ -186,11 +190,7 @@ if (builder.Environment.IsDevelopment())
 
 var app = builder.Build();
 
-#if DEBUG
-
 app.UseCors("AllowSpecificOrigin");
-
-#endif
 
 app.UseHttpLogging();
 

@@ -13,7 +13,7 @@ using Soundify.Models.Request.Update;
 namespace Soundify.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("/[controller]")]
 [Authorize]
 public class ArtistController : Controller
 {

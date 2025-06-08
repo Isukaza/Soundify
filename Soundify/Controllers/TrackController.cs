@@ -14,7 +14,7 @@ using Soundify.Models.Request.Update;
 namespace Soundify.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("/[controller]")]
 [Authorize]
 public class TrackController(IAlbumManager albumManager, ITrackManager trackManager, IGenreManager genreManager)
     : Controller
